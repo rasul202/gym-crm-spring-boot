@@ -1,0 +1,69 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-create-training
+      author: copilot
+      changes:
+        - createTable:
+            tableName: training
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: pk_training
+              - column:
+                  name: trainee_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trainer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: training_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: training_type_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: training_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: training_duration
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: training
+            baseColumnNames: trainee_id
+            referencedTableName: trainee
+            referencedColumnNames: id
+            constraintName: fk_training_trainee
+            onDelete: RESTRICT
+            onUpdate: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: training
+            baseColumnNames: trainer_id
+            referencedTableName: trainer
+            referencedColumnNames: id
+            constraintName: fk_training_trainer
+            onDelete: RESTRICT
+            onUpdate: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: training
+            baseColumnNames: training_type_id
+            referencedTableName: training_type
+            referencedColumnNames: id
+            constraintName: fk_training_training_type
+            onDelete: RESTRICT
+            onUpdate: CASCADE

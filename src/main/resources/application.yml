@@ -1,0 +1,96 @@
+spring:
+  profiles:
+    active: local
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  liquibase:
+    change-log: classpath:liquibase/changelog-master.yml
+    enabled: true
+
+security:
+  password:
+    chars: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+    length: 10
+
+logging:
+  level:
+    liquibase: info
+
+health:
+  inactive-trainer:
+    threshold-days: 3
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      status:
+        http-mapping:
+          down: 200
+          out-of-service: 200
+          unknown: 200
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:postgresql://localhost:5443/gymcrm_local
+    username: postgres
+    password: localSecretPwd123
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://localhost:5444/gymcrm_dev
+    username: postgres
+    password: devSecretPwd234
+
+---
+spring:
+  config:
+    activate:
+      on-profile: stg
+
+  datasource:
+    url: jdbc:postgresql://localhost:5445/gymcrm_stg
+    username: postgres
+    password: stgSecretPwd345
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:postgresql://localhost:5446/gymcrm_prod
+    username: postgres
+    password: prodSecretPwd456

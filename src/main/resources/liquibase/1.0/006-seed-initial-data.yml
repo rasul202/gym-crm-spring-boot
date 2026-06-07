@@ -1,0 +1,37 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-seed-training-types
+      author: copilot
+      comment: "Seed static training types once."
+      changes:
+        - insert:
+            tableName: training_type
+            columns:
+              - column:
+                  name: training_type_name
+                  value: YOGA
+        - insert:
+            tableName: training_type
+            columns:
+              - column:
+                  name: training_type_name
+                  value: CARDIO
+        - insert:
+            tableName: training_type
+            columns:
+              - column:
+                  name: training_type_name
+                  value: STRENGTH
+        - insert:
+            tableName: training_type
+            columns:
+              - column:
+                  name: training_type_name
+                  value: PILATES
+        - insert:
+            tableName: training_type
+            columns:
+              - column:
+                  name: training_type_name
+                  value: CROSSFIT
+

@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - include:
+      file: liquibase/1.0/001-create-app-user.yml
+  - include:
+      file: liquibase/1.0/002-create-training-type.yml
+  - include:
+      file: liquibase/1.0/003-create-trainee.yml
+  - include:
+      file: liquibase/1.0/004-create-trainer.yml
+  - include:
+      file: liquibase/1.0/005-create-training.yml
+  - include:
+      file: liquibase/1.0/006-seed-initial-data.yml
+  - include:
+      file: liquibase/1.0/007-alter-trainee-nullable.yml

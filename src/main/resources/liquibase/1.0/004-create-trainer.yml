@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-trainer
+      author: copilot
+      changes:
+        - createTable:
+            tableName: trainer
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: pk_trainer
+              - column:
+                  name: specialization
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: trainer
+            columnNames: user_id
+            constraintName: uk_trainer_user_id
+        - addForeignKeyConstraint:
+            baseTableName: trainer
+            baseColumnNames: user_id
+            referencedTableName: app_user
+            referencedColumnNames: id
+            constraintName: fk_trainer_user
+            onDelete: RESTRICT
+            onUpdate: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: trainer
+            baseColumnNames: specialization
+            referencedTableName: training_type
+            referencedColumnNames: id
+            constraintName: fk_trainer_specialization
+            onDelete: RESTRICT
+            onUpdate: CASCADE

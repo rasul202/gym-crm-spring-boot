@@ -1,0 +1,93 @@
+package com.epam.gymcrmspringboot.controller;
+import com.epam.gymcrmspringboot.dto.request.CreateTrainerRequest;
+import com.epam.gymcrmspringboot.dto.request.UpdateTrainerProfileRequest;
+import com.epam.gymcrmspringboot.dto.response.*;
+import com.epam.gymcrmspringboot.service.TrainerService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/trainers")
+@Api(tags = "Trainers")
+public class TrainerController {
+
+    private TrainerService trainerService;
+
+    @Autowired
+    public void setTrainerService(TrainerService trainerService) {this.trainerService = trainerService;}
+
+    @PostMapping
+    @ApiOperation(
+            value = "Register trainer",
+            notes = "Creates a trainer profile and returns generated credentials. "
+                    + "The system generates a random password. "
+                    + "Username is based on firstName.lastName; if it already exists, "
+                    + "sequential digits are appended to make it unique."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Trainer registered successfully")
+    })
+    public ResponseEntity<RegistrationResponse> registerTrainer(@RequestBody @Valid CreateTrainerRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(trainerService.registerTrainer(request));
+    }
+
+    @GetMapping("/{username}")
+    @ApiOperation(value = "Get trainer profile", notes = "Returns the trainer profile for the specified username.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Profile returned successfully"),
+            @ApiResponse(code = 401, message = "Authentication failed"),
+            @ApiResponse(code = 404, message = "Trainer not found or deactivated")
+    })
+    public ResponseEntity<GetTrainerProfileResponse> getTrainerProfile(
+            @PathVariable String username,
+            @RequestHeader("Password") String password) {
+        return ResponseEntity.ok(trainerService.getTrainerByUsername(username, password));
+    }
+
+    @PutMapping("/{username}")
+    @ApiOperation(value = "Update trainer profile", notes = "Updates trainer profile fields for an authenticated trainer.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Profile updated successfully"),
+            @ApiResponse(code = 401, message = "Authentication failed"),
+            @ApiResponse(code = 404, message = "Trainer not found or deactivated")
+    })
+    public ResponseEntity<UpdateTrainerProfileResponse> updateTrainerProfile(
+            @PathVariable String username,
+            @RequestHeader("Password") String password,
+            @RequestBody @Valid UpdateTrainerProfileRequest body) {
+
+        return ResponseEntity.ok(trainerService.updateTrainer(username ,password , body));
+    }
+
+    @PatchMapping("/{username}/status")
+    @ApiOperation(
+            value = "Activate or deactivate trainer",
+            notes = "Sets trainer status using the isActive request parameter."
+    )
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Trainer status updated successfully"),
+            @ApiResponse(code = 401, message = "Authentication failed"),
+            @ApiResponse(code = 404, message = "Trainer not found or deactivated")
+    })
+    public ResponseEntity<Void> activateDeactivateTrainer(
+            @PathVariable String username,
+            @RequestHeader("Password") String password,
+            @RequestParam("isActive")  @NotNull(message = "isActive must not be null") Boolean isActive) {
+        if (isActive == true) {
+            trainerService.activateTrainer(username, password);
+        } else {
+            trainerService.deactivateTrainer(username, password);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+}
+

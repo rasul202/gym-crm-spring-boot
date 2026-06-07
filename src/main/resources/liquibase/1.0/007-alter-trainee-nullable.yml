@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-alter-trainee-nullable-columns
+      author: copilot
+      changes:
+        - dropNotNullConstraint:
+            tableName: trainee
+            columnName: date_of_birth
+            columnDataType: DATE
+        - dropNotNullConstraint:
+            tableName: trainee
+            columnName: address
+            columnDataType: VARCHAR(255)
+

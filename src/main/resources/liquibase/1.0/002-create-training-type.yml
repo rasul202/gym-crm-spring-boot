@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-training-type
+      author: copilot
+      changes:
+        - createTable:
+            tableName: training_type
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: pk_training_type
+              - column:
+                  name: training_type_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: training_type
+            columnNames: training_type_name
+            constraintName: uk_training_type_name
+
