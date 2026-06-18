@@ -39,7 +39,7 @@ public class TraineeEntity {
     @JoinColumn(name = "user_id" )
     UserEntity user;
 
-    @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE,CascadeType.MERGE} , orphanRemoval = true )
     List<TrainingEntity> trainings;
 
 }

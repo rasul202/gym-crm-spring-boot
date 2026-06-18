@@ -6,6 +6,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,12 +19,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/training-types")
 @Api(tags = "Training Types")
+@RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE , makeFinal = true)
 public class TrainingTypeController {
 
-    private TrainingTypeService trainingTypeService;
-
-    @Autowired
-    public void setTrainingTypeService(TrainingTypeService trainingTypeService) {this.trainingTypeService = trainingTypeService;}
+    TrainingTypeService trainingTypeService;
 
     @GetMapping
     @ApiOperation(value = "Get all training types", notes = "Returns all supported training types")

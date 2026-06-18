@@ -1,5 +1,7 @@
 package com.epam.gymcrmspringboot.util;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -7,11 +9,12 @@ import java.security.SecureRandom;
 import java.util.Set;
 
 @Component
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UsernamePasswordUtil {
 
-    private final String chars;
-    private final int passwordLength;
-    private final SecureRandom random = new SecureRandom();
+    String chars;
+    int passwordLength;
+    SecureRandom random = new SecureRandom();
 
     public UsernamePasswordUtil(
             @Value("${security.password.chars}") String chars,

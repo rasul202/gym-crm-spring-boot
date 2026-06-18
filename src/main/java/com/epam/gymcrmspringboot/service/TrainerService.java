@@ -28,6 +28,8 @@ public interface TrainerService {
 
     List<TrainerEntity> getAllTrainersUsernamesIn(List<String> usernames);
 
+    boolean isRegisteredAsTrainer(String firstName, String lastName);
+
     //for internal use cases not for API calls
     TrainerEntity getTrainerByUsername(String username);
 

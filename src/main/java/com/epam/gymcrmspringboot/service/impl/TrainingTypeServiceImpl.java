@@ -5,6 +5,9 @@ import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.model.TrainingTypeEntity;
 import com.epam.gymcrmspringboot.repository.TrainingTypeRepository;
 import com.epam.gymcrmspringboot.service.TrainingTypeService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +17,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE , makeFinal = true)
 public class TrainingTypeServiceImpl implements TrainingTypeService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingTypeServiceImpl.class);
+    static Logger LOGGER = LoggerFactory.getLogger(TrainingTypeServiceImpl.class);
 
-    @Autowired
-    private TrainingTypeRepository trainingTypeRepository;
+    TrainingTypeRepository trainingTypeRepository;
 
     @Override
     public TrainingTypeEntity getTrainingTypeByName(String trainingTypeName) {

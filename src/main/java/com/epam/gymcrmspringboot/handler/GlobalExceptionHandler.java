@@ -3,6 +3,7 @@ package com.epam.gymcrmspringboot.handler;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.exception.SamePasswordException;
+import com.epam.gymcrmspringboot.exception.UserAlreadyRegisteredInOppositeRoleException;
 import com.epam.gymcrmspringboot.logging.TransactionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleSamePasswordException(SamePasswordException ex) {
         LOGGER.warn("Same password txId={} message={}", getTransactionIdForResponse(), ex.getMessage());
         return buildError(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(UserAlreadyRegisteredInOppositeRoleException.class)
+    public ResponseEntity<Map<String, Object>> handleUserAlreadyRegisteredInOppositeRoleException(
+            UserAlreadyRegisteredInOppositeRoleException ex) {
+        LOGGER.warn("Opposite-role registration conflict txId={} message={}", getTransactionIdForResponse(), ex.getMessage());
+        return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
     @ExceptionHandler(IllegalStateException.class)

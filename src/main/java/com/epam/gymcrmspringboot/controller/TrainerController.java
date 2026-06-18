@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/trainers")
 @Api(tags = "Trainers")
+@RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class TrainerController {
 
-    private TrainerService trainerService;
-
-    @Autowired
-    public void setTrainerService(TrainerService trainerService) {this.trainerService = trainerService;}
+    TrainerService trainerService;
 
     @PostMapping
     @ApiOperation(
@@ -81,7 +82,7 @@ public class TrainerController {
             @PathVariable String username,
             @RequestHeader("Password") String password,
             @RequestParam("isActive")  @NotNull(message = "isActive must not be null") Boolean isActive) {
-        if (isActive == true) {
+        if (Boolean.TRUE.equals(isActive)) {
             trainerService.activateTrainer(username, password);
         } else {
             trainerService.deactivateTrainer(username, password);

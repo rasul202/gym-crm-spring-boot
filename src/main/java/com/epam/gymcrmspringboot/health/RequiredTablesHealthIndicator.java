@@ -1,6 +1,8 @@
 package com.epam.gymcrmspringboot.health;
 
 
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.stereotype.Component;
@@ -16,9 +18,11 @@ import java.util.Locale;
 import java.util.Set;
 
 @Component("requiredTables")
+@RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class RequiredTablesHealthIndicator implements HealthIndicator {
 
-    private static final Set<String> REQUIRED_TABLES = Set.of(
+    static Set<String> REQUIRED_TABLES = Set.of(
             "app_user",
             "trainer",
             "trainee",
@@ -26,11 +30,7 @@ public class RequiredTablesHealthIndicator implements HealthIndicator {
             "training_type"
     );
 
-    private final DataSource dataSource;
-
-    public RequiredTablesHealthIndicator(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    DataSource dataSource;
 
     @Override
     public Health health() {

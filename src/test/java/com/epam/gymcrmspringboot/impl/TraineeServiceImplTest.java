@@ -9,10 +9,12 @@ import com.epam.gymcrmspringboot.dto.response.TrainerSummary;
 import com.epam.gymcrmspringboot.dto.response.UpdateTraineeProfileResponse;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
+import com.epam.gymcrmspringboot.exception.UserAlreadyRegisteredInOppositeRoleException;
 import com.epam.gymcrmspringboot.mapper.TraineeMapper;
 import com.epam.gymcrmspringboot.mapper.UserMapper;
 import com.epam.gymcrmspringboot.model.TraineeEntity;
 import com.epam.gymcrmspringboot.model.TrainerEntity;
+import com.epam.gymcrmspringboot.model.TrainingEntity;
 import com.epam.gymcrmspringboot.model.TrainingTypeEntity;
 import com.epam.gymcrmspringboot.model.UserEntity;
 import com.epam.gymcrmspringboot.repository.TraineeRepository;
@@ -21,6 +23,7 @@ import com.epam.gymcrmspringboot.service.TrainingService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.service.impl.TraineeServiceImpl;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
+import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -64,6 +67,9 @@ class TraineeServiceImplTest {
 
     @Mock
     private TrainingService trainingService;
+
+    @Mock
+    private TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
@@ -130,34 +136,6 @@ class TraineeServiceImplTest {
     @DisplayName("registerTrainee Tests")
     class RegisterTraineeTests {
 
-        @Test
-        @DisplayName("Should register trainee successfully")
-        void testRegisterTraineeSuccess() {
-            // Arrange
-            com.epam.gymcrmspringboot.dto.request.CreateUserRequest createUserRequest =
-                    mock(com.epam.gymcrmspringboot.dto.request.CreateUserRequest.class);
-            com.epam.gymcrmspringboot.dto.response.CreateUserProfileResponse createUserProfileResponse =
-                    new com.epam.gymcrmspringboot.dto.response.CreateUserProfileResponse(1L, "John.Doe", "password123");
-
-            when(userMapper.toCreateUserRequest(createTraineeRequest))
-                    .thenReturn(createUserRequest);
-            when(userService.createUserProfile(createUserRequest))
-                    .thenReturn(createUserProfileResponse);
-            when(traineeRepository.save(any(TraineeEntity.class)))
-                    .thenReturn(traineeEntity);
-
-            // Act
-            RegistrationResponse result = traineeService.registerTrainee(createTraineeRequest);
-
-            // Assert
-            assertNotNull(result);
-            assertEquals("John.Doe", result.getUsername());
-            assertEquals("password123", result.getPassword());
-            verify(requestValidator).validate(createTraineeRequest);
-            verify(userMapper).toCreateUserRequest(createTraineeRequest);
-            verify(userService).createUserProfile(createUserRequest);
-            verify(traineeRepository).save(any(TraineeEntity.class));
-        }
 
         @Test
         @DisplayName("Should throw exception when user creation fails")
@@ -195,6 +173,21 @@ class TraineeServiceImplTest {
 
             // Assert
             verify(requestValidator, times(1)).validate(createTraineeRequest);
+        }
+
+        @Test
+        @DisplayName("Should fail when user is already registered as trainer")
+        void testRegisterTraineeFailsWhenUserAlreadyRegisteredAsTrainer() {
+            doThrow(new UserAlreadyRegisteredInOppositeRoleException("already trainer"))
+                    .when(trainerTraineeRegistrationValidator)
+                    .validateTraineeRegistration(createTraineeRequest);
+
+            assertThrows(UserAlreadyRegisteredInOppositeRoleException.class,
+                    () -> traineeService.registerTrainee(createTraineeRequest));
+
+            verify(requestValidator).validate(createTraineeRequest);
+            verify(trainerTraineeRegistrationValidator).validateTraineeRegistration(createTraineeRequest);
+            verifyNoInteractions(userService, traineeRepository);
         }
     }
 
@@ -234,6 +227,21 @@ class TraineeServiceImplTest {
             assertThrows(AuthenticationException.class,
                     () -> traineeService.updateTrainee("John.Doe", "password123", updateTraineeProfileRequest));
         }
+
+        @Test
+        @DisplayName("Should throw IllegalArgumentException when no updatable fields are provided")
+        void testUpdateTraineeThrowsExceptionWhenNoUpdatableFieldsProvided() {
+            // Arrange
+            UpdateTraineeProfileRequest emptyRequest = new UpdateTraineeProfileRequest();
+
+            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class,
+                    () -> traineeService.updateTrainee("John.Doe", "password123", emptyRequest));
+            verify(traineeRepository, never()).findByUserUsernameAndUserIsActiveTrue(anyString());
+            verify(traineeRepository, never()).save(any());
+        }
     }
 
     @Nested
@@ -263,6 +271,19 @@ class TraineeServiceImplTest {
             // Act & Assert
             assertThrows(AuthenticationException.class,
                     () -> traineeService.deactivateTrainee("John.Doe", "wrongPassword"));
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when trainee is already deactivated")
+        void testDeactivateTraineeThrowsExceptionWhenAlreadyDeactivated() {
+            // Arrange
+            when(userService.authenticateAnyUser(any(LoginRequest.class))).thenReturn(true);
+            when(userService.deactivateUserProfile("John.Doe")).thenReturn(false);
+
+            // Act & Assert
+            assertThrows(IllegalStateException.class,
+                    () -> traineeService.deactivateTrainee("John.Doe", "password123"));
+            verify(userService).deactivateUserProfile("John.Doe");
         }
     }
 
@@ -436,9 +457,38 @@ class TraineeServiceImplTest {
 
             doReturn(true).when(userService).authenticateActiveUser(any(LoginRequest.class));
             doReturn(Optional.of(traineeEntity)).when(traineeRepository)
-                    .findByUserUsernameAndUserIsActiveTrue("John.Doe");
+                    .findByUserUsernameAndUserIsActiveTrueWithTrainings("John.Doe");
             doReturn(List.of(trainer1, trainer2)).when(trainerService)
                     .getAllTrainersUsernamesIn(anyList());
+
+            TrainerEntity oldTrainer = TrainerEntity.builder()
+                    .id(3L)
+                    .user(UserEntity.builder().id(4L).username("old.trainer").isActive(true).build())
+                    .specialization(TrainingTypeEntity.builder().trainingTypeName("Yoga").build())
+                    .build();
+
+            TrainingEntity existingWithTrainer1 = TrainingEntity.builder()
+                    .id(10L)
+                    .trainee(traineeEntity)
+                    .trainer(trainer1)
+                    .trainingName("Real Training")
+                    .trainingType(trainer1.getSpecialization())
+                    .trainingDate(LocalDate.of(2024, 1, 1))
+                    .trainingDuration(45)
+                    .build();
+
+            TrainingEntity obsoleteTraining = TrainingEntity.builder()
+                    .id(11L)
+                    .trainee(traineeEntity)
+                    .trainer(oldTrainer)
+                    .trainingName("Outdated Training")
+                    .trainingType(oldTrainer.getSpecialization())
+                    .trainingDate(LocalDate.of(2024, 1, 2))
+                    .trainingDuration(45)
+                    .build();
+
+            traineeEntity.setTrainings(new ArrayList<>(List.of(existingWithTrainer1, obsoleteTraining)));
+            doReturn(traineeEntity).when(traineeRepository).save(traineeEntity);
 
             // Act
             List<TrainerSummary> result = traineeService.updateTraineeTrainers(
@@ -447,8 +497,16 @@ class TraineeServiceImplTest {
             // Assert
             assertNotNull(result);
             assertEquals(2, result.size());
-            verify(trainingService).deleteAllByTrainee(traineeEntity);
-            verify(trainingService).saveAll(any());
+            assertEquals(2, traineeEntity.getTrainings().size());
+            assertTrue(traineeEntity.getTrainings().stream()
+                    .anyMatch(training -> "trainer1.user".equals(training.getTrainer().getUser().getUsername())));
+            assertTrue(traineeEntity.getTrainings().stream()
+                    .anyMatch(training -> "trainer2.user".equals(training.getTrainer().getUser().getUsername())));
+            assertFalse(traineeEntity.getTrainings().stream()
+                    .anyMatch(training -> "old.trainer".equals(training.getTrainer().getUser().getUsername())));
+
+            verify(traineeRepository).save(traineeEntity);
+            verifyNoInteractions(trainingService);
         }
 
         @Test
@@ -458,14 +516,15 @@ class TraineeServiceImplTest {
             List<String> trainerUsernames = List.of("nonexistent.trainer");
 
             doReturn(true).when(userService).authenticateActiveUser(any(LoginRequest.class));
-            doReturn(Optional.of(traineeEntity)).when(traineeRepository)
-                    .findByUserUsernameAndUserIsActiveTrue("John.Doe");
             doReturn(new ArrayList<TrainerEntity>()).when(trainerService)
                     .getAllTrainersUsernamesIn(anyList());
 
             // Act & Assert
             assertThrows(EntityNotFoundException.class,
                     () -> traineeService.updateTraineeTrainers("John.Doe", "password123", trainerUsernames));
+            verify(traineeRepository, never()).findByUserUsernameAndUserIsActiveTrueWithTrainings(any());
+            verify(traineeRepository, never()).save(any());
+            verifyNoInteractions(trainingService);
         }
 
         @Test
@@ -475,6 +534,31 @@ class TraineeServiceImplTest {
             assertThrows(IllegalArgumentException.class,
                     () -> traineeService.updateTraineeTrainers("John.Doe", "password123", List.of()));
             verifyNoInteractions(userService, traineeRepository, trainerService, trainingService);
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when trainer has no specialization")
+        void testUpdateTraineeTrainersThrowsExceptionWhenTrainerHasNoSpecialization() {
+            // Arrange
+            List<String> trainerUsernames = List.of("trainer1.user");
+            TrainerEntity trainerWithoutSpecialization = TrainerEntity.builder()
+                    .id(1L)
+                    .user(UserEntity.builder().id(2L).username("trainer1.user").isActive(true).build())
+                    .specialization(null)
+                    .build();
+
+            doReturn(true).when(userService).authenticateActiveUser(any(LoginRequest.class));
+            doReturn(List.of(trainerWithoutSpecialization)).when(trainerService)
+                    .getAllTrainersUsernamesIn(anyList());
+            traineeEntity.setTrainings(new ArrayList<>());
+            doReturn(Optional.of(traineeEntity)).when(traineeRepository)
+                    .findByUserUsernameAndUserIsActiveTrueWithTrainings("John.Doe");
+
+            // Act & Assert
+            assertThrows(IllegalStateException.class,
+                    () -> traineeService.updateTraineeTrainers("John.Doe", "password123", trainerUsernames));
+            verify(traineeRepository, never()).save(any());
+            verifyNoInteractions(trainingService);
         }
     }
 

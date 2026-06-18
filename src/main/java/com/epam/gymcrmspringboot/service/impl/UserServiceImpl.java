@@ -10,6 +10,9 @@ import com.epam.gymcrmspringboot.repository.UserRepository;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.util.UsernamePasswordUtil;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,31 +21,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserServiceImpl implements UserService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    static Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Autowired
-    private UserRepository userRepository;
-
-    private PasswordEncoder passwordEncoder;
-    private UsernamePasswordUtil usernamePasswordUtil;
-    private RequestValidator requestValidator;
-
-    @Autowired
-    public void setUsernamePasswordUtil(UsernamePasswordUtil usernamePasswordUtil) {this.usernamePasswordUtil = usernamePasswordUtil;}
-
-    @Autowired
-    public void setRequestValidator(RequestValidator requestValidator) {
-        this.requestValidator = requestValidator;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {this.passwordEncoder = passwordEncoder;}
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+    UsernamePasswordUtil usernamePasswordUtil;
+    RequestValidator requestValidator;
 
     @Override
     @Transactional
@@ -52,19 +42,21 @@ public class UserServiceImpl implements UserService {
                 request == null ? null : request.getLastName());
         requestValidator.validate(request);
 
-        Set<String> existingUsernames = userRepository.findAll().stream()
-                .map(UserEntity::getUsername)
-                .collect(Collectors.toSet());
+        String firstName = request.getFirstName().trim();
+        String lastName = request.getLastName().trim();
+        String baseUsername = firstName + "." + lastName;
+        String username = baseUsername;
+        int suffix = 1;
 
-        String username = usernamePasswordUtil.generateUsername(
-                request.getFirstName().trim(),
-                request.getLastName().trim(),
-                existingUsernames);
+        while (userRepository.existsByUsername(username)) {
+            username = baseUsername + suffix;
+            suffix++;
+        }
         String rawPassword = usernamePasswordUtil.generatePassword();
 
         UserEntity user = UserEntity.builder()
-                .firstName(request.getFirstName().trim())
-                .lastName(request.getLastName().trim())
+                .firstName(firstName)
+                .lastName(lastName)
                 .username(username)
                 .password(passwordEncoder.encode(rawPassword))
                 .build();
@@ -122,7 +114,7 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findByUsername(username)
                 .map(user -> {
-                    if (user.getIsActive() == false) {
+                    if (!Boolean.TRUE.equals(user.getIsActive())) {
                         LOGGER.info("Deactivate user profile operation skipped because user is already inactive username={}", username);
                         return false;
                     }
@@ -144,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
         return userRepository.findByUsername(username)
                 .map(user -> {
-                    if (user.getIsActive() == true) {
+                    if (Boolean.TRUE.equals(user.getIsActive())) {
                         LOGGER.info("Activate user profile operation skipped because user is already active username={}", username);
                         return false;
                     }

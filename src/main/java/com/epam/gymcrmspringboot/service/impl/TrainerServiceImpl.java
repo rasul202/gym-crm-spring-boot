@@ -16,59 +16,37 @@ import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.TrainingTypeService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
+import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE , makeFinal = true)
 public class TrainerServiceImpl implements TrainerService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerServiceImpl.class);
+    static Logger LOGGER = LoggerFactory.getLogger(TrainerServiceImpl.class);
 
-    @Autowired
-    private TrainerRepository trainerRepository;
-
-    private UserService userService;
-    private RequestValidator requestValidator;
-    private TrainerMapper trainerMapper;
-    private UserMapper userMapper;
-    private TrainingTypeService trainingTypeService;
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setRequestValidator(RequestValidator requestValidator) {
-        this.requestValidator = requestValidator;
-    }
-
-    @Autowired
-    public void setTrainerMapper(TrainerMapper trainerMapper) {
-        this.trainerMapper = trainerMapper;
-    }
-
-    @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    @Autowired
-    public void setTrainingTypeService(TrainingTypeService trainingTypeService) {
-        this.trainingTypeService = trainingTypeService;
-    }
+    TrainerRepository trainerRepository;
+    UserService userService;
+    RequestValidator requestValidator;
+    TrainerMapper trainerMapper;
+    UserMapper userMapper;
+    TrainingTypeService trainingTypeService;
+    TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
 
     private void authenticateActiveUser(String username, String password) {
         if (!userService.authenticateActiveUser(LoginRequest.builder().username(username).password(password).build())) {
             throw new AuthenticationException("Invalid username or password for trainer user profile: " + username);
         }
     }
-
 
     private void authenticateAnyUser(String username, String password) {
         if (!userService.authenticateAnyUser(LoginRequest.builder().username(username).password(password).build())) {
@@ -84,6 +62,7 @@ public class TrainerServiceImpl implements TrainerService {
                 request == null ? null : request.getLastName(),
                 request == null ? null : request.getSpecialization());
         requestValidator.validate(request);
+        trainerTraineeRegistrationValidator.validateTrainerRegistration(request);
 
         TrainingTypeEntity specialization = trainingTypeService.getTrainingTypeByName(request.getSpecialization().trim());
         CreateUserProfileResponse user = userService.createUserProfile(userMapper.toCreateUserRequest(request));
@@ -191,6 +170,19 @@ public class TrainerServiceImpl implements TrainerService {
     @Override
     public List<TrainerEntity> getAllTrainersUsernamesIn(List<String> usernames) {
         return trainerRepository.findByUserUsernameInAndUserIsActiveTrue(usernames);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isRegisteredAsTrainer(String firstName, String lastName) {
+        boolean registered = trainerRepository.existsByUserFirstNameIgnoreCaseAndUserLastNameIgnoreCase(
+                firstName.trim(),
+                lastName.trim());
+        LOGGER.debug("Trainer existence check by full name firstName={} lastName={} registered={}",
+                firstName,
+                lastName,
+                registered);
+        return registered;
     }
 
     @Override

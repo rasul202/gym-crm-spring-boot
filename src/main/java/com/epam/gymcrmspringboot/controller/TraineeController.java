@@ -14,6 +14,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +36,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/trainees")
+@RequiredArgsConstructor
 @Api(tags = "Trainees")
+@FieldDefaults(level = AccessLevel.PRIVATE , makeFinal = true)
 public class TraineeController {
 
-    private TraineeService traineeService;
-
-    @Autowired
-    public void setTraineeService(TraineeService traineeService) {this.traineeService = traineeService;}
+    TraineeService traineeService;
 
     @PostMapping
     @ApiOperation(value = "Register trainee", notes = "Creates a new trainee profile and returns generated credentials")
@@ -102,7 +104,7 @@ public class TraineeController {
             @PathVariable String username,
             @RequestHeader("Password") String password,
             @RequestParam("isActive") @NotNull(message = "isActive must not be null") Boolean isActive) {
-        if (isActive == true) {
+        if (Boolean.TRUE.equals(isActive)) {
             traineeService.activateTrainee(username, password);
         } else {
             traineeService.deactivateTrainee(username, password);
@@ -124,7 +126,7 @@ public class TraineeController {
         return ResponseEntity.ok(traineeService.updateTraineeTrainers(username, password, request.getTrainerUsernames()));
     }
 
-    @GetMapping("{traineeUsername}/available-trainers")
+    @GetMapping("/{traineeUsername}/available-trainers")
     @ApiOperation(value = "Get available trainers", notes = "Returns trainers not currently assigned to the specified trainee")
     @ApiResponses({
             @ApiResponse(code = 200, message = "Available trainers returned successfully"),

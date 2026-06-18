@@ -27,7 +27,11 @@ public interface TraineeService {
 
     void deleteTrainee(String username, String password);
 
+    boolean isRegisteredAsTrainee(String firstName, String lastName);
+
     TraineeEntity getTraineeByUsername(String username);
+
+    TraineeEntity getTraineeByUsernameWithTrainings(String username);
 
     List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, String password);
 

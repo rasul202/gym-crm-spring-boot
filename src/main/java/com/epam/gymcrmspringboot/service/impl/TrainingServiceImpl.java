@@ -17,9 +17,10 @@ import com.epam.gymcrmspringboot.repository.TrainingCriteriaRepository;
 import com.epam.gymcrmspringboot.repository.TrainingRepository;
 import com.epam.gymcrmspringboot.service.*;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,50 +29,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@FieldDefaults(level = AccessLevel.PRIVATE , makeFinal = true)
 public class TrainingServiceImpl implements TrainingService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingServiceImpl.class);
+    static Logger LOGGER = LoggerFactory.getLogger(TrainingServiceImpl.class);
 
-    @Autowired
-    private TrainingRepository trainingRepository;
-    @Autowired
-    private TrainingCriteriaRepository trainingCriteriaRepository;
+    TrainingRepository trainingRepository;
+    TrainingCriteriaRepository trainingCriteriaRepository;
+    UserService userService;
+    TrainingMapper trainingMapper;
+    RequestValidator requestValidator;
+    TrainingTypeService trainingTypeService;
+    TrainerService trainerService;
+    TraineeService traineeService;
 
-    private UserService userService;
-    private TrainingMapper trainingMapper;
-    private RequestValidator requestValidator;
-    private TrainingTypeService trainingTypeService;
-    private TrainerService trainerService;
-    private TraineeService traineeService;
-
-    @Autowired
-    public void setUserService(UserService userService){
+    public TrainingServiceImpl(
+            TrainingRepository trainingRepository,
+            TrainingCriteriaRepository trainingCriteriaRepository,
+            UserService userService,
+            TrainingMapper trainingMapper,
+            RequestValidator requestValidator,
+            TrainingTypeService trainingTypeService,
+            TrainerService trainerService,
+            @Lazy TraineeService traineeService) {
+        this.trainingRepository = trainingRepository;
+        this.trainingCriteriaRepository = trainingCriteriaRepository;
         this.userService = userService;
-    }
-
-    @Autowired
-    public void setTrainingMapper(TrainingMapper trainingMapper){
         this.trainingMapper = trainingMapper;
-    }
-
-    @Autowired
-    public void setRequestValidator(RequestValidator requestValidator){
         this.requestValidator = requestValidator;
-    }
-
-    @Autowired
-    public void setTrainingTypeService(TrainingTypeService trainingTypeService){
         this.trainingTypeService = trainingTypeService;
-    }
-
-    @Autowired
-    public void setTrainerService(TrainerService trainerService){
         this.trainerService = trainerService;
-    }
-
-    @Autowired
-    public void setTraineeService(@Lazy TraineeService traineeService){
-        // Lazy proxy prevents eager bean creation cycle (TrainingService <-> TraineeService).
         this.traineeService = traineeService;
     }
 
@@ -132,7 +119,7 @@ public class TrainingServiceImpl implements TrainingService {
                         criteriaRequest.getFromDate(),
                         criteriaRequest.getToDate(),
                         criteriaRequest.getTrainingType(),
-                        criteriaRequest.getTraineeName() != null ? criteriaRequest.getTraineeName().trim() : null);
+                        criteriaRequest.getTrainerName() != null ? criteriaRequest.getTrainerName().trim() : null);
 
 
         return trainings.stream()

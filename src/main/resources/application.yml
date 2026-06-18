@@ -43,8 +43,8 @@ management:
       show-details: always
       status:
         http-mapping:
-          down: 200
-          out-of-service: 200
+          down: 503
+          out-of-service: 503
           unknown: 200
   endpoints:
     web:
@@ -59,8 +59,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5443/gymcrm_local
-    username: postgres
-    password: localSecretPwd123
+    username: ${DB_LOCAL_USERNAME:postgres}
+    password: ${DB_LOCAL_PASSWORD:localSecretPwd123}
 
 ---
 spring:
@@ -70,8 +70,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5444/gymcrm_dev
-    username: postgres
-    password: devSecretPwd234
+    username: ${DB_DEV_USERNAME:postgres}
+    password: ${DB_DEV_PASSWORD}
 
 ---
 spring:
@@ -81,8 +81,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5445/gymcrm_stg
-    username: postgres
-    password: stgSecretPwd345
+    username: ${DB_STG_USERNAME:postgres}
+    password: ${DB_STG_PASSWORD}
 
 ---
 spring:
@@ -92,5 +92,5 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5446/gymcrm_prod
-    username: postgres
-    password: prodSecretPwd456
+    username: ${DB_PROD_USERNAME:postgres}
+    password: ${DB_PROD_PASSWORD}

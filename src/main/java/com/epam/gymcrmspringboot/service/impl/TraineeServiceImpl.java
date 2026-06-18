@@ -15,63 +15,39 @@ import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.TrainingService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
+import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class TraineeServiceImpl implements TraineeService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
-    private static final String TRAINER_LINK_TRAINING_NAME_PREFIX = "Trainee-Trainer Link";
-    private static final Integer TRAINER_LINK_DEFAULT_DURATION_MINUTES = 60;
+    static Logger LOGGER = LoggerFactory.getLogger(TraineeServiceImpl.class);
+    static String TRAINER_LINK_TRAINING_NAME_PREFIX = "Trainee-Trainer Link";
+    static Integer TRAINER_LINK_DEFAULT_DURATION_MINUTES = 60;
 
-    @Autowired
-    private TraineeRepository traineeRepository;
-
-    private TrainerService trainerService;
-    private UserService userService;
-    private RequestValidator requestValidator;
-    private TraineeMapper traineeMapper;
-    private UserMapper userMapper;
-    private TrainingService trainingService;
-
-    @Autowired
-    public void setTrainerService(TrainerService trainerService) {
-        this.trainerService = trainerService;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-
-    @Autowired
-    public void setRequestValidator(RequestValidator requestValidator) {
-        this.requestValidator = requestValidator;
-    }
-
-    @Autowired
-    public void setTraineeMapper(TraineeMapper traineeMapper) {
-        this.traineeMapper = traineeMapper;
-    }
-
-    @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
-    @Autowired
-    public void setTrainingService(TrainingService trainingService) {this.trainingService = trainingService;}
+    TraineeRepository traineeRepository;
+    TrainerService trainerService;
+    UserService userService;
+    RequestValidator requestValidator;
+    TraineeMapper traineeMapper;
+    UserMapper userMapper;
+    TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
 
     private void authenticateActiveUser(String username, String password) {
         if (!userService.authenticateActiveUser(LoginRequest.builder().username(username).password(password).build())) {
@@ -92,6 +68,7 @@ public class TraineeServiceImpl implements TraineeService {
                 request == null ? null : request.getFirstName(),
                 request == null ? null : request.getLastName());
         requestValidator.validate(request);
+        trainerTraineeRegistrationValidator.validateTraineeRegistration(request);
 
         CreateUserProfileResponse user = userService.createUserProfile(userMapper.toCreateUserRequest(request));
         if (user == null) {
@@ -173,8 +150,6 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeMapper.toUpdateTraineeProfileResponse(updated);
     }
 
-    // Replaces all current trainee-trainer links by removing existing assignments
-    // and creating new default assignment trainings for the provided trainers.
     @Override
     @Transactional
     public List<TrainerSummary> updateTraineeTrainers(String username, String password, List<String> trainerUsernames) {
@@ -186,7 +161,6 @@ public class TraineeServiceImpl implements TraineeService {
         }
 
         authenticateActiveUser(username, password);
-        TraineeEntity trainee = getTraineeByUsername(username);
 
         List<String> normalizedUsernames = trainerUsernames.stream()
                 .map(trainerUsername -> trainerUsername == null ? null : trainerUsername.trim())
@@ -212,28 +186,66 @@ public class TraineeServiceImpl implements TraineeService {
             throw new EntityNotFoundException("Trainer(s) not found: " + String.join(", ", absentTrainers));
         }
 
-        trainingService.deleteAllByTrainee(trainee);
+        TraineeEntity trainee = getTraineeByUsernameWithTrainings(username);
+        Set<String> selectedTrainerUsernames = new HashSet<>(normalizedUsernames);
 
-        List<TrainingEntity> newTrainerAssignments = new ArrayList<>();
+        List<TrainingEntity> traineeTrainings = trainee.getTrainings();
+        if (traineeTrainings == null) {
+            traineeTrainings = new ArrayList<>();
+            trainee.setTrainings(traineeTrainings);
+        }
+
+        List<TrainingEntity> trainingsToRemove = traineeTrainings.stream()
+                .filter(training -> {
+                    TrainerEntity trainingTrainer = training.getTrainer();
+                    if (trainingTrainer == null || trainingTrainer.getUser() == null) {
+                        return true;
+                    }
+                    String existingTrainerUsername = trainingTrainer.getUser().getUsername();
+                    return existingTrainerUsername == null || !selectedTrainerUsernames.contains(existingTrainerUsername);
+                })
+                .toList();
+
+        if (!trainingsToRemove.isEmpty()) {
+            traineeTrainings.removeAll(trainingsToRemove); // Removes from the list (triggers orphanRemoval)
+
+            for (TrainingEntity training : trainingsToRemove) {
+                training.setTrainee(null);       // Breaks the relationship on the owning side
+            }
+        }
+
+        Set<String> existingTrainerUsernames = traineeTrainings.stream()
+                .map(TrainingEntity::getTrainer)
+                .filter(trainer -> trainer != null && trainer.getUser() != null)
+                .map(trainer -> trainer.getUser().getUsername())
+                .filter(existingTrainerUsername -> existingTrainerUsername != null && !existingTrainerUsername.isBlank())
+                .collect(Collectors.toSet());
+
         LocalDate assignmentDate = LocalDate.now();
-
-        for (TrainerEntity trainer : trainers) {
-            TrainingTypeEntity trainingType = trainer.getSpecialization();
-            if (trainingType == null) {
-                throw new IllegalStateException("Trainer has no specialization assigned: " + trainer.getUser().getUsername());
+        for (String trainerUsername : normalizedUsernames) {
+            if (existingTrainerUsernames.contains(trainerUsername)) {
+                continue;
             }
 
-            newTrainerAssignments.add(TrainingEntity.builder()
+            TrainerEntity trainer = trainersByUsername.get(trainerUsername);
+            TrainingTypeEntity trainingType = trainer.getSpecialization();
+            if (trainingType == null) {
+                throw new IllegalStateException("Trainer has no specialization assigned: " + trainerUsername);
+            }
+
+            TrainingEntity trainingEntity =TrainingEntity.builder()
                     .trainee(trainee)
                     .trainer(trainer)
-                    .trainingName(TRAINER_LINK_TRAINING_NAME_PREFIX + " " + trainee.getUser().getUsername() + "-" + trainer.getUser().getUsername())
+                    .trainingName(TRAINER_LINK_TRAINING_NAME_PREFIX + " " + trainee.getUser().getUsername() + "-" + trainerUsername)
                     .trainingType(trainingType)
                     .trainingDate(assignmentDate)
                     .trainingDuration(TRAINER_LINK_DEFAULT_DURATION_MINUTES)
-                    .build());
+                    .build();
+
+            traineeTrainings.add(trainingEntity);
         }
 
-        trainingService.saveAll(newTrainerAssignments);
+        traineeRepository.save(trainee);
 
         return normalizedUsernames.stream()
                 .map(trainersByUsername::get)
@@ -282,8 +294,27 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public boolean isRegisteredAsTrainee(String firstName, String lastName) {
+        boolean registered = traineeRepository.existsByUserFirstNameIgnoreCaseAndUserLastNameIgnoreCase(
+                firstName.trim(),
+                lastName.trim());
+        LOGGER.debug("Trainee existence check by full name firstName={} lastName={} registered={}",
+                firstName,
+                lastName,
+                registered);
+        return registered;
+    }
+
+    @Override
     public TraineeEntity getTraineeByUsername(String username) {
         return traineeRepository.findByUserUsernameAndUserIsActiveTrue(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee not found: " + username));
+    }
+
+    @Override
+    public TraineeEntity getTraineeByUsernameWithTrainings(String username) {
+        return traineeRepository.findByUserUsernameAndUserIsActiveTrueWithTrainings(username)
                 .orElseThrow(() -> new EntityNotFoundException("Trainee not found: " + username));
     }
 
@@ -292,8 +323,4 @@ public class TraineeServiceImpl implements TraineeService {
         return trainerService.getAvailableTrainersForTrainee(traineeUsername, password);
     }
 
-    private TraineeEntity getTraineeByUsernameWithTrainings(String username) {
-        return traineeRepository.findByUserUsernameAndUserIsActiveTrueWithTrainings(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainee not found: " + username));
-    }
 }

@@ -201,7 +201,7 @@ class TrainingServiceImplTest {
             criteriaRequest.setFromDate(LocalDate.of(2024, 1, 1));
             criteriaRequest.setToDate(LocalDate.of(2024, 12, 31));
             criteriaRequest.setTrainingType("Yoga");
-            criteriaRequest.setTraineeName("  John  ");
+            criteriaRequest.setTrainerName("  John  ");
 
             when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
             when(trainingCriteriaRepository.findTraineeTrainings(

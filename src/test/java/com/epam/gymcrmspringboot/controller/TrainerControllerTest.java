@@ -8,6 +8,7 @@ import com.epam.gymcrmspringboot.dto.response.TraineeSummary;
 import com.epam.gymcrmspringboot.dto.response.UpdateTrainerProfileResponse;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
+import com.epam.gymcrmspringboot.exception.UserAlreadyRegisteredInOppositeRoleException;
 import com.epam.gymcrmspringboot.handler.GlobalExceptionHandler;
 import com.epam.gymcrmspringboot.service.TrainerService;
 import tools.jackson.databind.ObjectMapper;
@@ -133,6 +134,20 @@ class TrainerControllerTest {
             mockMvc.perform(post("/trainers")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 409 when user is already registered as trainee")
+        void shouldReturn409WhenUserAlreadyRegisteredAsTrainee() throws Exception {
+            CreateTrainerRequest request = new CreateTrainerRequest("Jane", "Smith", "Yoga");
+            when(trainerService.registerTrainer(any(CreateTrainerRequest.class)))
+                    .thenThrow(new UserAlreadyRegisteredInOppositeRoleException("Cannot register as trainer: user is already registered as trainee"));
+
+            mockMvc.perform(post("/trainers")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isConflict())
+                    .andExpect(jsonPath("$.message").value("Cannot register as trainer: user is already registered as trainee"));
         }
     }
 

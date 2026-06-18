@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,9 +80,7 @@ class UserServiceImplTest {
         @DisplayName("Should create user profile successfully")
         void testCreateUserProfileSuccess() {
             // Arrange
-            when(userRepository.findAll()).thenReturn(Collections.emptyList());
-            when(usernamePasswordUtil.generateUsername(anyString(), anyString(), any()))
-                    .thenReturn("John.Doe");
+            when(userRepository.existsByUsername("John.Doe")).thenReturn(false);
             when(usernamePasswordUtil.generatePassword()).thenReturn("RawPass123");
             when(passwordEncoder.encode("RawPass123")).thenReturn("encodedPass");
             when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
@@ -104,9 +101,7 @@ class UserServiceImplTest {
         @DisplayName("Should validate request before creating user")
         void testCreateUserProfileValidates() {
             // Arrange
-            when(userRepository.findAll()).thenReturn(Collections.emptyList());
-            when(usernamePasswordUtil.generateUsername(anyString(), anyString(), any()))
-                    .thenReturn("John.Doe");
+            when(userRepository.existsByUsername("John.Doe")).thenReturn(false);
             when(usernamePasswordUtil.generatePassword()).thenReturn("RawPass123");
             when(passwordEncoder.encode("RawPass123")).thenReturn("encodedPass");
             when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
@@ -125,9 +120,7 @@ class UserServiceImplTest {
             createUserRequest.setFirstName("  John  ");
             createUserRequest.setLastName("  Doe  ");
 
-            when(userRepository.findAll()).thenReturn(Collections.emptyList());
-            when(usernamePasswordUtil.generateUsername(eq("John"), eq("Doe"), any()))
-                    .thenReturn("John.Doe");
+            when(userRepository.existsByUsername("John.Doe")).thenReturn(false);
             when(usernamePasswordUtil.generatePassword()).thenReturn("RawPass123");
             when(passwordEncoder.encode("RawPass123")).thenReturn("encodedPass");
             when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
@@ -136,7 +129,37 @@ class UserServiceImplTest {
             userService.createUserProfile(createUserRequest);
 
             // Assert
-            verify(usernamePasswordUtil).generateUsername(eq("John"), eq("Doe"), any());
+            verify(userRepository).existsByUsername("John.Doe");
+        }
+
+        @Test
+        @DisplayName("Should append numeric suffix when base username already exists")
+        void testCreateUserProfileAddsNumericSuffix() {
+            // Arrange
+            UserEntity savedUser = UserEntity.builder()
+                    .id(1L)
+                    .firstName("John")
+                    .lastName("Doe")
+                    .username("John.Doe2")
+                    .password("encodedPass")
+                    .isActive(true)
+                    .build();
+
+            when(userRepository.existsByUsername("John.Doe")).thenReturn(true);
+            when(userRepository.existsByUsername("John.Doe1")).thenReturn(true);
+            when(userRepository.existsByUsername("John.Doe2")).thenReturn(false);
+            when(usernamePasswordUtil.generatePassword()).thenReturn("RawPass123");
+            when(passwordEncoder.encode("RawPass123")).thenReturn("encodedPass");
+            when(userRepository.save(any(UserEntity.class))).thenReturn(savedUser);
+
+            // Act
+            CreateUserProfileResponse result = userService.createUserProfile(createUserRequest);
+
+            // Assert
+            assertEquals("John.Doe2", result.getUsername());
+            verify(userRepository).existsByUsername("John.Doe");
+            verify(userRepository).existsByUsername("John.Doe1");
+            verify(userRepository).existsByUsername("John.Doe2");
         }
     }
 

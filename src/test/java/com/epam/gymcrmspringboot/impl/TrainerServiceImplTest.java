@@ -10,6 +10,7 @@ import com.epam.gymcrmspringboot.dto.response.TrainerSummary;
 import com.epam.gymcrmspringboot.dto.response.UpdateTrainerProfileResponse;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
+import com.epam.gymcrmspringboot.exception.UserAlreadyRegisteredInOppositeRoleException;
 import com.epam.gymcrmspringboot.mapper.TrainerMapper;
 import com.epam.gymcrmspringboot.mapper.UserMapper;
 import com.epam.gymcrmspringboot.model.TrainerEntity;
@@ -20,6 +21,7 @@ import com.epam.gymcrmspringboot.service.TrainingTypeService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.service.impl.TrainerServiceImpl;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
+import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -58,6 +60,9 @@ class TrainerServiceImplTest {
 
     @Mock
     private TrainingTypeService trainingTypeService;
+
+    @Mock
+    private TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
 
     @InjectMocks
     private TrainerServiceImpl trainerService;
@@ -180,6 +185,20 @@ class TrainerServiceImplTest {
             // Act & Assert
             assertThrows(IllegalStateException.class,
                     () -> trainerService.registerTrainer(createTrainerRequest));
+        }
+        @Test
+        @DisplayName("Should fail when user is already registered as trainee")
+        void testRegisterTrainerFailsWhenUserAlreadyRegisteredAsTrainee() {
+            doThrow(new UserAlreadyRegisteredInOppositeRoleException("already trainee"))
+                    .when(trainerTraineeRegistrationValidator)
+                    .validateTrainerRegistration(createTrainerRequest);
+
+            assertThrows(UserAlreadyRegisteredInOppositeRoleException.class,
+                    () -> trainerService.registerTrainer(createTrainerRequest));
+
+            verify(requestValidator).validate(createTrainerRequest);
+            verify(trainerTraineeRegistrationValidator).validateTrainerRegistration(createTrainerRequest);
+            verifyNoInteractions(trainingTypeService, userService, trainerRepository);
         }
     }
 
@@ -469,4 +488,3 @@ class TrainerServiceImplTest {
         }
     }
 }
-

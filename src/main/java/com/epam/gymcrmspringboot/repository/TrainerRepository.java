@@ -15,6 +15,8 @@ public interface TrainerRepository extends JpaRepository<TrainerEntity, Long> {
 
     Optional<TrainerEntity> findByUserUsername(String username);
 
+    boolean existsByUserFirstNameIgnoreCaseAndUserLastNameIgnoreCase(String firstName, String lastName);
+
     List<TrainerEntity> findByUserUsernameInAndUserIsActiveTrue(List<String> usernames);
 
     @Query("""

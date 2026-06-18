@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +28,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/trainings")
 @Api(tags = "Trainings")
+@RequiredArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE , makeFinal = true)
 public class TrainingController {
 
-    private TrainingService trainingService;
-
-    @Autowired
-    public void setTrainingService(TrainingService trainingService) {this.trainingService = trainingService;}
+    TrainingService trainingService;
 
     @PostMapping
     @ApiOperation(value = "Add training", notes = "Creates a new training for trainee-trainer pair if trainer successfully authenticated")

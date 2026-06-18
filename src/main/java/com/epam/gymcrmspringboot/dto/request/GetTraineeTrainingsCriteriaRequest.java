@@ -21,7 +21,7 @@ public class GetTraineeTrainingsCriteriaRequest {
     LocalDate toDate;
 
     @Size(max = 100, message = "trainerName must not exceed 100 characters")
-    String traineeName;
+    String trainerName;
 
     @Size(max = 100, message = "trainingType must not exceed 100 characters")
     String trainingType;
