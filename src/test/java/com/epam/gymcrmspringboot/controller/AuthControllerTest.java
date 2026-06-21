@@ -1,9 +1,10 @@
 package com.epam.gymcrmspringboot.controller;
 
-import com.epam.gymcrmspringboot.dto.request.ChangePasswordRequest;
+import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.handler.GlobalExceptionHandler;
-import com.epam.gymcrmspringboot.service.UserService;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,28 +14,25 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import tools.jackson.databind.ObjectMapper;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for {@link AuthController}.
- * Uses standaloneSetup (the plain-Spring equivalent of @WebMvcTest) so that
- * only the controller slice is loaded — no full Spring context.
+ * Uses standaloneSetup (plain-Spring equivalent of @WebMvcTest) — no full context.
  */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("AuthController Tests")
 class AuthControllerTest {
 
     @Mock
-    private UserService userService;
+    private AuthenticationService authenticationService;
 
     @InjectMocks
     private AuthController authController;
@@ -44,6 +42,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
+        ReflectionTestUtils.setField(authController, "jwtCookieName", "JWT_TOKEN");
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -51,177 +50,101 @@ class AuthControllerTest {
     }
 
     // -------------------------------------------------------------------------
-    // GET /users/login
+    // POST /authentication/login
     // -------------------------------------------------------------------------
     @Nested
-    @DisplayName("GET /users/login")
+    @DisplayName("POST /authentication/login")
     class LoginTests {
 
         @Test
-        @DisplayName("Should return 200 when credentials are valid")
-        void shouldReturn200WhenCredentialsAreValid() throws Exception {
+        @DisplayName("Should return 204 with Set-Cookie header when credentials are valid")
+        void shouldReturn204WhenCredentialsAreValid() throws Exception {
             // Arrange
-            when(userService.authenticateActiveUser(any())).thenReturn(true);
+            LoginRequest request = new LoginRequest("John.Doe", "secret123");
+            when(authenticationService.authenticate("John.Doe", "secret123")).thenReturn("jwt-token-value");
 
             // Act & Assert
-            mockMvc.perform(get("/users/login")
-                            .param("username", "John.Doe")
-                            .param("password", "secret123"))
-                    .andExpect(status().isOk());
-
-            verify(userService).authenticateActiveUser(any());
-        }
-
-        @Test
-        @DisplayName("Should return 401 when credentials are invalid")
-        void shouldReturn401WhenCredentialsAreInvalid() throws Exception {
-            // Arrange
-            when(userService.authenticateActiveUser(any())).thenReturn(false);
-
-            // Act & Assert
-            mockMvc.perform(get("/users/login")
-                            .param("username", "John.Doe")
-                            .param("password", "wrongpassword"))
-                    .andExpect(status().isUnauthorized());
-
-            verify(userService).authenticateActiveUser(any());
-        }
-
-        @Test
-        @DisplayName("Should return 400 when username param is missing")
-        void shouldReturn400WhenUsernameParamIsMissing() throws Exception {
-            mockMvc.perform(get("/users/login")
-                            .param("password", "secret123"))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).authenticateActiveUser(any());
-        }
-
-        @Test
-        @DisplayName("Should return 400 when password param is missing")
-        void shouldReturn400WhenPasswordParamIsMissing() throws Exception {
-            mockMvc.perform(get("/users/login")
-                            .param("username", "John.Doe"))
-                    .andExpect(status().isBadRequest());
-
-            verify(userService, never()).authenticateActiveUser(any());
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // PUT /users/password
-    // -------------------------------------------------------------------------
-    @Nested
-    @DisplayName("PUT /users/password")
-    class ChangePasswordTests {
-
-        @Test
-        @DisplayName("Should return 200 when password is changed successfully")
-        void shouldReturn200WhenPasswordIsChangedSuccessfully() throws Exception {
-            // Arrange
-            ChangePasswordRequest request =
-                    new ChangePasswordRequest("John.Doe", "oldPass123", "newPass456");
-            when(userService.authenticateActiveUser(any())).thenReturn(true);
-            doNothing().when(userService).changePassword("John.Doe", "newPass456");
-
-            // Act & Assert
-            mockMvc.perform(put("/users/password")
+            mockMvc.perform(post("/authentication/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent())
+                    .andExpect(header().exists("Set-Cookie"));
 
-            verify(userService).authenticateActiveUser(any());
-            verify(userService).changePassword("John.Doe", "newPass456");
-        }
-
-        @Test
-        @DisplayName("Should return 401 when old password is wrong")
-        void shouldReturn401WhenOldPasswordIsWrong() throws Exception {
-            // Arrange
-            ChangePasswordRequest request =
-                    new ChangePasswordRequest("John.Doe", "wrongOldPass", "newPass456");
-            when(userService.authenticateActiveUser(any())).thenReturn(false);
-
-            // Act & Assert
-            mockMvc.perform(put("/users/password")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isUnauthorized());
-
-            verify(userService, never()).changePassword(any(), any());
+            verify(authenticationService).authenticate("John.Doe", "secret123");
         }
 
         @Test
         @DisplayName("Should return 400 when username is blank")
         void shouldReturn400WhenUsernameIsBlank() throws Exception {
             // Arrange
-            ChangePasswordRequest request =
-                    new ChangePasswordRequest("", "oldPass123", "newPass456");
+            LoginRequest request = new LoginRequest("", "secret123");
 
             // Act & Assert
-            mockMvc.perform(put("/users/password")
+            mockMvc.perform(post("/authentication/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.fieldErrors.username").exists());
+                    .andExpect(status().isBadRequest());
 
-            verify(userService, never()).authenticateActiveUser(any());
+            verify(authenticationService, never()).authenticate(any(), any());
         }
 
         @Test
-        @DisplayName("Should return 400 when oldPassword is blank")
-        void shouldReturn400WhenOldPasswordIsBlank() throws Exception {
+        @DisplayName("Should return 400 when password is blank")
+        void shouldReturn400WhenPasswordIsBlank() throws Exception {
             // Arrange
-            ChangePasswordRequest request =
-                    new ChangePasswordRequest("John.Doe", "", "newPass456");
+            LoginRequest request = new LoginRequest("John.Doe", "");
 
             // Act & Assert
-            mockMvc.perform(put("/users/password")
+            mockMvc.perform(post("/authentication/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.fieldErrors.oldPassword").exists());
-        }
+                    .andExpect(status().isBadRequest());
 
-        @Test
-        @DisplayName("Should return 400 when newPassword is blank")
-        void shouldReturn400WhenNewPasswordIsBlank() throws Exception {
-            // Arrange
-            ChangePasswordRequest request =
-                    new ChangePasswordRequest("John.Doe", "oldPass123", "");
-
-            // Act & Assert
-            mockMvc.perform(put("/users/password")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.fieldErrors.newPassword").exists());
+            verify(authenticationService, never()).authenticate(any(), any());
         }
 
         @Test
         @DisplayName("Should return 400 when request body is missing")
         void shouldReturn400WhenRequestBodyIsMissing() throws Exception {
-            mockMvc.perform(put("/users/password")
+            // Act & Assert
+            mockMvc.perform(post("/authentication/login")
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest());
+
+            verify(authenticationService, never()).authenticate(any(), any());
         }
 
         @Test
-        @DisplayName("Should return 401 when service throws AuthenticationException")
-        void shouldReturn401WhenServiceThrowsAuthenticationException() throws Exception {
-            // Arrange
-            ChangePasswordRequest request =
-                    new ChangePasswordRequest("John.Doe", "oldPass", "newPass");
-            when(userService.authenticateActiveUser(any()))
-                    .thenThrow(new AuthenticationException("User not found or inactive"));
+        @DisplayName("Should return 401 when authentication service rejects credentials")
+        void shouldReturn401WhenAuthenticationServiceRejectsCredentials() throws Exception {
+            LoginRequest request = new LoginRequest("John.Doe", "wrong");
+            when(authenticationService.authenticate("John.Doe", "wrong"))
+                    .thenThrow(new AuthenticationException("Invalid credentials"));
 
-            // Act & Assert
-            mockMvc.perform(put("/users/password")
+            mockMvc.perform(post("/authentication/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.message").value("User not found or inactive"));
+                    .andExpect(jsonPath("$.message").value("Invalid credentials"));
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // POST /authentication/logout
+    // -------------------------------------------------------------------------
+    @Nested
+    @DisplayName("POST /authentication/logout")
+    class LogoutTests {
+
+        @Test
+        @DisplayName("Should return 204 with cleared cookie header on logout")
+        void shouldReturn204WithClearedCookieOnLogout() throws Exception {
+            // Act & Assert
+            mockMvc.perform(post("/authentication/logout"))
+                    .andExpect(status().isNoContent())
+                    .andExpect(header().exists("Set-Cookie"));
+
+            verifyNoInteractions(authenticationService);
         }
     }
 }
-

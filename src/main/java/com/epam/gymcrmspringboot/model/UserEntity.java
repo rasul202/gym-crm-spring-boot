@@ -41,6 +41,12 @@ public class UserEntity {
     @Column(name = "is_active", nullable = false)
     Boolean isActive;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, optional = false)
+    TrainerEntity trainer;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, optional = false)
+    TraineeEntity trainee;
+
     @PrePersist
     public void setDefaults(){
         if (this.isActive == null) {

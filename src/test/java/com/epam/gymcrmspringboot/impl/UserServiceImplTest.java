@@ -1,12 +1,14 @@
 package com.epam.gymcrmspringboot.impl;
 
+import com.epam.gymcrmspringboot.dto.request.ChangePasswordRequest;
 import com.epam.gymcrmspringboot.dto.request.CreateUserRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.response.CreateUserProfileResponse;
+import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.exception.SamePasswordException;
 import com.epam.gymcrmspringboot.model.UserEntity;
 import com.epam.gymcrmspringboot.repository.UserRepository;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.service.impl.UserServiceImpl;
 import com.epam.gymcrmspringboot.util.UsernamePasswordUtil;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
@@ -18,14 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("UserServiceImpl Tests")
 @ExtendWith(MockitoExtension.class)
@@ -43,15 +45,20 @@ class UserServiceImplTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private AuthenticationService authenticationService;
+
     @InjectMocks
     private UserServiceImpl userService;
 
     private CreateUserRequest createUserRequest;
     private UserEntity userEntity;
-    private LoginRequest loginRequest;
+    private Authentication authentication;
 
     @BeforeEach
     void setUp() {
+        authentication = mock(Authentication.class);
+
         createUserRequest = CreateUserRequest.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -64,11 +71,6 @@ class UserServiceImplTest {
                 .username("John.Doe")
                 .password("TestPass123")
                 .isActive(true)
-                .build();
-
-        loginRequest = LoginRequest.builder()
-                .username("John.Doe")
-                .password("TestPass123")
                 .build();
     }
 
@@ -160,103 +162,6 @@ class UserServiceImplTest {
             verify(userRepository).existsByUsername("John.Doe");
             verify(userRepository).existsByUsername("John.Doe1");
             verify(userRepository).existsByUsername("John.Doe2");
-        }
-    }
-
-    @Nested
-    @DisplayName("authenticateActiveUser Tests")
-    class AuthenticateActiveUserTests {
-
-        @Test
-        @DisplayName("Should authenticate active user with correct password")
-        void testAuthenticateActiveUserSuccess() {
-            // Arrange
-            when(userRepository.findByUsernameAndIsActiveTrue("John.Doe"))
-                    .thenReturn(Optional.of(userEntity));
-            when(passwordEncoder.matches("TestPass123", "TestPass123")).thenReturn(true);
-
-            // Act
-            boolean result = userService.authenticateActiveUser(loginRequest);
-
-            // Assert
-            assertTrue(result);
-        }
-
-        @Test
-        @DisplayName("Should throw EntityNotFoundException when user not found")
-        void testAuthenticateActiveUserThrowsExceptionForNonexistentUser() {
-            // Arrange
-            when(userRepository.findByUsernameAndIsActiveTrue("nonexistent"))
-                    .thenReturn(Optional.empty());
-
-            LoginRequest invalidRequest = LoginRequest.builder()
-                    .username("nonexistent")
-                    .password("password")
-                    .build();
-
-            // Act & Assert
-            assertThrows(EntityNotFoundException.class,
-                    () -> userService.authenticateActiveUser(invalidRequest));
-        }
-
-        @Test
-        @DisplayName("Should return false when password is incorrect")
-        void testAuthenticateActiveUserFailsWithWrongPassword() {
-            // Arrange
-            when(userRepository.findByUsernameAndIsActiveTrue("John.Doe"))
-                    .thenReturn(Optional.of(userEntity));
-            when(passwordEncoder.matches("WrongPassword", "TestPass123")).thenReturn(false);
-
-            LoginRequest invalidRequest = LoginRequest.builder()
-                    .username("John.Doe")
-                    .password("WrongPassword")
-                    .build();
-
-            // Act
-            boolean result = userService.authenticateActiveUser(invalidRequest);
-
-            // Assert
-            assertFalse(result);
-        }
-
-        @Test
-        @DisplayName("Should validate login request")
-        void testAuthenticateActiveUserValidatesRequest() {
-            // Arrange
-            when(userRepository.findByUsernameAndIsActiveTrue("John.Doe"))
-                    .thenReturn(Optional.of(userEntity));
-            when(passwordEncoder.matches("TestPass123", "TestPass123")).thenReturn(true);
-
-            // Act
-            userService.authenticateActiveUser(loginRequest);
-
-            // Assert
-            verify(requestValidator).validate(loginRequest);
-        }
-    }
-
-    @Nested
-    @DisplayName("authenticateAnyUser Tests")
-    class AuthenticateAnyUserTests {
-
-        @Test
-        @DisplayName("Should authenticate inactive user when credentials are correct")
-        void testAuthenticateAnyUserSuccess() {
-            // Arrange
-            UserEntity inactiveUser = UserEntity.builder()
-                    .username("John.Doe")
-                    .password("encoded")
-                    .isActive(false)
-                    .build();
-
-            when(userRepository.findByUsername("John.Doe")).thenReturn(Optional.of(inactiveUser));
-            when(passwordEncoder.matches("TestPass123", "encoded")).thenReturn(true);
-
-            // Act
-            boolean result = userService.authenticateAnyUser(loginRequest);
-
-            // Assert
-            assertTrue(result);
         }
     }
 
@@ -401,15 +306,19 @@ class UserServiceImplTest {
         @Test
         @DisplayName("Should change password successfully")
         void testChangePasswordSuccess() {
-            // Arrange
+            // Arrange: old="TestPass123", new="NewPassword123" — different strings
+            ChangePasswordRequest request =
+                    new ChangePasswordRequest("John.Doe", "TestPass123", "NewPassword123");
+
+            doNothing().when(authenticationService).assertAuthenticatedUser(eq("John.Doe"), any());
             when(userRepository.findByUsernameAndIsActiveTrue("John.Doe"))
-                    .thenReturn(Optional.of(userEntity));
-            when(passwordEncoder.matches("NewPassword123", "TestPass123")).thenReturn(false);
+                    .thenReturn(Optional.of(userEntity)); // userEntity.password = "TestPass123"
+            when(passwordEncoder.matches("TestPass123", "TestPass123")).thenReturn(true);
             when(passwordEncoder.encode("NewPassword123")).thenReturn("encodedNew");
             when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
             // Act
-            userService.changePassword("John.Doe", "NewPassword123");
+            userService.changePassword(request, authentication);
 
             // Assert
             verify(userRepository).save(any(UserEntity.class));
@@ -418,48 +327,48 @@ class UserServiceImplTest {
         @Test
         @DisplayName("Should throw SamePasswordException when new password equals old password")
         void testChangePasswordThrowsExceptionForSamePassword() {
+            // Arrange: same string for old and new
+            ChangePasswordRequest request =
+                    new ChangePasswordRequest("John.Doe", "TestPass123", "TestPass123");
+
+            doNothing().when(authenticationService).assertAuthenticatedUser(eq("John.Doe"), any());
+
+            // Act & Assert — impl uses plain string equality check before touching the encoder
+            assertThrows(SamePasswordException.class,
+                    () -> userService.changePassword(request, authentication));
+        }
+
+        @Test
+        @DisplayName("Should throw AuthenticationException when old password does not match stored password")
+        void testChangePasswordThrowsExceptionWhenOldPasswordDoesNotMatch() {
             // Arrange
+            ChangePasswordRequest request =
+                    new ChangePasswordRequest("John.Doe", "WrongPass", "NewPassword123");
+
+            doNothing().when(authenticationService).assertAuthenticatedUser(eq("John.Doe"), any());
             when(userRepository.findByUsernameAndIsActiveTrue("John.Doe"))
                     .thenReturn(Optional.of(userEntity));
-            when(passwordEncoder.matches("TestPass123", "TestPass123")).thenReturn(true);
+            when(passwordEncoder.matches("WrongPass", "TestPass123")).thenReturn(false);
 
             // Act & Assert
-            assertThrows(SamePasswordException.class,
-                    () -> userService.changePassword("John.Doe", "TestPass123"));
+            assertThrows(AuthenticationException.class,
+                    () -> userService.changePassword(request, authentication));
         }
 
         @Test
         @DisplayName("Should throw EntityNotFoundException when user not found")
-        void testChangePasswordThrowsException() {
+        void testChangePasswordThrowsExceptionWhenUserNotFound() {
             // Arrange
+            ChangePasswordRequest request =
+                    new ChangePasswordRequest("nonexistent", "OldPass", "NewPass");
+
+            doNothing().when(authenticationService).assertAuthenticatedUser(eq("nonexistent"), any());
             when(userRepository.findByUsernameAndIsActiveTrue("nonexistent"))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThrows(EntityNotFoundException.class,
-                    () -> userService.changePassword("nonexistent", "newpass"));
-        }
-
-        @Test
-        @DisplayName("Should throw IllegalArgumentException when username is blank")
-        void testChangePasswordThrowsExceptionForBlankUsername() {
-            // Act & Assert
-            assertThrows(IllegalArgumentException.class,
-                    () -> userService.changePassword("   ", "newpass"));
-            assertThrows(IllegalArgumentException.class,
-                    () -> userService.changePassword(null, "newpass"));
-        }
-
-        @Test
-        @DisplayName("Should throw IllegalArgumentException when newPassword is blank")
-        void testChangePasswordThrowsExceptionForBlankPassword() {
-            // Act & Assert
-            assertThrows(IllegalArgumentException.class,
-                    () -> userService.changePassword("John.Doe", "   "));
-            assertThrows(IllegalArgumentException.class,
-                    () -> userService.changePassword("John.Doe", null));
+                    () -> userService.changePassword(request, authentication));
         }
     }
 }
-
-
