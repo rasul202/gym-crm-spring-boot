@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -26,9 +29,31 @@ public class GlobalExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    public ResponseEntity<Map<String, Object>> handleInternalAuthenticationServiceException(
+            InternalAuthenticationServiceException ex) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof LockedException lockedException) {
+            LOGGER.warn("Locked account wrapped in internal auth exception txId={} message={}",
+                    getTransactionIdForResponse(), lockedException.getMessage());
+            return buildError(HttpStatus.LOCKED, lockedException.getMessage());
+        }
+
+        LOGGER.warn("Internal authentication service exception txId={} message={}",
+                getTransactionIdForResponse(), ex.getMessage());
+        return buildError(HttpStatus.UNAUTHORIZED, "An unexpected error occurred");
+    }
+
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException ex) {
+    public ResponseEntity<Map<String, Object>> handleCustomAuthenticationException(AuthenticationException ex) {
         LOGGER.warn("Authentication failed txId={} message={}", getTransactionIdForResponse(), ex.getMessage());
+        return buildError(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Map<String, Object>> handleSpringSecurityAuthenticationException(
+            org.springframework.security.core.AuthenticationException ex) {
+        LOGGER.warn("Spring Security authentication failed txId={} message={}", getTransactionIdForResponse(), ex.getMessage());
         return buildError(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 

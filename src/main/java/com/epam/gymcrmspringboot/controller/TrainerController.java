@@ -11,9 +11,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,11 +47,11 @@ public class TrainerController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainer not found or deactivated")
     })
-    public ResponseEntity<GetTrainerProfileResponse> getTrainerProfile(
-            @PathVariable String username,
-            @RequestHeader("Password") String password) {
-        return ResponseEntity.ok(trainerService.getTrainerByUsername(username, password));
-    }
+     public ResponseEntity<GetTrainerProfileResponse> getTrainerProfile(
+             @PathVariable String username,
+             Authentication authentication) {
+         return ResponseEntity.ok(trainerService.getTrainerByUsername(username, authentication));
+     }
 
     @PutMapping("/{username}")
     @ApiOperation(value = "Update trainer profile", notes = "Updates trainer profile fields for an authenticated trainer.")
@@ -60,13 +60,12 @@ public class TrainerController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainer not found or deactivated")
     })
-    public ResponseEntity<UpdateTrainerProfileResponse> updateTrainerProfile(
-            @PathVariable String username,
-            @RequestHeader("Password") String password,
-            @RequestBody @Valid UpdateTrainerProfileRequest body) {
-
-        return ResponseEntity.ok(trainerService.updateTrainer(username ,password , body));
-    }
+     public ResponseEntity<UpdateTrainerProfileResponse> updateTrainerProfile(
+             @PathVariable String username,
+             Authentication authentication,
+             @RequestBody @Valid UpdateTrainerProfileRequest body) {
+         return ResponseEntity.ok(trainerService.updateTrainer(username, authentication, body));
+     }
 
     @PatchMapping("/{username}/status")
     @ApiOperation(
@@ -80,15 +79,15 @@ public class TrainerController {
     })
     public ResponseEntity<Void> activateDeactivateTrainer(
             @PathVariable String username,
-            @RequestHeader("Password") String password,
+            Authentication authentication,
             @RequestParam("isActive")  @NotNull(message = "isActive must not be null") Boolean isActive) {
-        if (Boolean.TRUE.equals(isActive)) {
-            trainerService.activateTrainer(username, password);
-        } else {
-            trainerService.deactivateTrainer(username, password);
-        }
-        return ResponseEntity.ok().build();
-    }
+         if (Boolean.TRUE.equals(isActive)) {
+             trainerService.activateTrainer(username, authentication);
+         } else {
+             trainerService.deactivateTrainer(username, authentication);
+         }
+         return ResponseEntity.ok().build();
+     }
 
 }
 

@@ -1,12 +1,14 @@
 package com.epam.gymcrmspringboot.service.impl;
 
+import com.epam.gymcrmspringboot.dto.request.ChangePasswordRequest;
 import com.epam.gymcrmspringboot.dto.request.CreateUserRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.response.CreateUserProfileResponse;
+import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.exception.SamePasswordException;
 import com.epam.gymcrmspringboot.model.UserEntity;
 import com.epam.gymcrmspringboot.repository.UserRepository;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.util.UsernamePasswordUtil;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
@@ -15,12 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder;
     UsernamePasswordUtil usernamePasswordUtil;
     RequestValidator requestValidator;
+    AuthenticationService authenticationService;
 
     @Override
     @Transactional
@@ -68,40 +69,6 @@ public class UserServiceImpl implements UserService {
                 response.getId(),
                 response.getUsername());
         return response;
-    }
-
-    @Override
-    public boolean authenticateActiveUser(LoginRequest request) {
-        LOGGER.info("Authenticate active user operation has been started for username={}",
-                request == null ? null : request.getUsername());
-        requestValidator.validate(request);
-
-        Optional<UserEntity> optionalUser = userRepository.findByUsernameAndIsActiveTrue(request.getUsername());
-        return authenticate(optionalUser , request);
-    }
-
-    @Override
-    public boolean authenticateAnyUser(LoginRequest request) {
-        LOGGER.info("Authenticate any user operation has been started for username={}",
-                request == null ? null : request.getUsername());
-        requestValidator.validate(request);
-
-        Optional<UserEntity> optionalUser = userRepository.findByUsername(request.getUsername());
-        return authenticate(optionalUser , request);
-    }
-
-    private boolean authenticate(Optional<UserEntity> persistentUser , LoginRequest request){
-        if (persistentUser.isEmpty()) {
-            LOGGER.warn("Authentication failed because user was not found username={}", request == null ? null : request.getUsername());
-            throw new EntityNotFoundException("User not found: " + request.getUsername());
-        }
-        boolean matched = persistentUser
-                .map(user -> passwordEncoder.matches(request.getPassword(), user.getPassword()))
-                .orElse(false);
-        LOGGER.info("Authenticate any user operation has been completed for username={} , Authenticated={}",
-                request.getUsername(),
-                matched);
-        return matched;
     }
 
     @Override
@@ -150,20 +117,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(String username, String newPassword) {
-        LOGGER.info("Change password operation has been started for username={}", username);
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("username must not be blank");
-        }
-        if (newPassword == null || newPassword.isBlank()) {
-            throw new IllegalArgumentException("newPassword must not be blank");
+    public void changePassword(ChangePasswordRequest request, Authentication authentication) {
+        LOGGER.info("Change password operation has been started for username={}",
+                request == null ? null : request.getUsername());
+        requestValidator.validate(request);
+
+        String username = request.getUsername().trim();
+        String oldPassword = request.getOldPassword();
+        String newPassword = request.getNewPassword();
+
+        authenticationService.assertAuthenticatedUser(username, authentication);
+
+        if (oldPassword.equals(newPassword)) {
+            throw new SamePasswordException("New password cannot be same as the old password");
         }
 
         UserEntity user = userRepository.findByUsernameAndIsActiveTrue(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + username));
 
-        if (passwordEncoder.matches(newPassword, user.getPassword())) {
-            throw new SamePasswordException("New password cannot be same as the old password");
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new AuthenticationException("Invalid current password for user: " + username);
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));

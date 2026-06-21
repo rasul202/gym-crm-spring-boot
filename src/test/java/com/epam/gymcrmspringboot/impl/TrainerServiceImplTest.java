@@ -1,8 +1,6 @@
 package com.epam.gymcrmspringboot.impl;
 
 import com.epam.gymcrmspringboot.dto.request.CreateTrainerRequest;
-import com.epam.gymcrmspringboot.dto.request.CreateUserRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.request.UpdateTrainerProfileRequest;
 import com.epam.gymcrmspringboot.dto.response.GetTrainerProfileResponse;
 import com.epam.gymcrmspringboot.dto.response.RegistrationResponse;
@@ -17,6 +15,7 @@ import com.epam.gymcrmspringboot.model.TrainerEntity;
 import com.epam.gymcrmspringboot.model.TrainingTypeEntity;
 import com.epam.gymcrmspringboot.model.UserEntity;
 import com.epam.gymcrmspringboot.repository.TrainerRepository;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.service.TrainingTypeService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.service.impl.TrainerServiceImpl;
@@ -30,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +62,9 @@ class TrainerServiceImplTest {
     private TrainingTypeService trainingTypeService;
 
     @Mock
+    private AuthenticationService authenticationService;
+
+    @Mock
     private TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
 
     @InjectMocks
@@ -75,9 +78,12 @@ class TrainerServiceImplTest {
     private GetTrainerProfileResponse getTrainerProfileResponse;
     private UpdateTrainerProfileResponse updateTrainerProfileResponse;
     private TrainerSummary trainerSummary;
+    private Authentication authentication;
 
     @BeforeEach
     void setUp() {
+        authentication = mock(Authentication.class);
+
         createTrainerRequest = new CreateTrainerRequest(
                 "John",
                 "Smith",
@@ -136,7 +142,8 @@ class TrainerServiceImplTest {
         @DisplayName("Should register trainer successfully")
         void testRegisterTrainerSuccess() {
             // Arrange
-            CreateUserRequest createUserRequest = mock(CreateUserRequest.class);
+            com.epam.gymcrmspringboot.dto.request.CreateUserRequest createUserRequest =
+                    mock(com.epam.gymcrmspringboot.dto.request.CreateUserRequest.class);
             com.epam.gymcrmspringboot.dto.response.CreateUserProfileResponse createUserProfileResponse =
                     new com.epam.gymcrmspringboot.dto.response.CreateUserProfileResponse(1L, "John.Smith", "password123");
 
@@ -176,7 +183,8 @@ class TrainerServiceImplTest {
         @DisplayName("Should throw exception when user creation fails")
         void testRegisterTrainerFailsWhenUserCreationFails() {
             // Arrange
-            CreateUserRequest createUserRequest = mock(CreateUserRequest.class);
+            com.epam.gymcrmspringboot.dto.request.CreateUserRequest createUserRequest =
+                    mock(com.epam.gymcrmspringboot.dto.request.CreateUserRequest.class);
             when(trainingTypeService.getTrainingTypeByName("Yoga"))
                     .thenReturn(trainingTypeEntity);
             when(userMapper.toCreateUserRequest(createTrainerRequest)).thenReturn(createUserRequest);
@@ -186,6 +194,7 @@ class TrainerServiceImplTest {
             assertThrows(IllegalStateException.class,
                     () -> trainerService.registerTrainer(createTrainerRequest));
         }
+
         @Test
         @DisplayName("Should fail when user is already registered as trainee")
         void testRegisterTrainerFailsWhenUserAlreadyRegisteredAsTrainee() {
@@ -210,7 +219,7 @@ class TrainerServiceImplTest {
         @DisplayName("Should update trainer successfully")
         void testUpdateTrainerSuccess() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainerRepository.findByUserUsername("John.Smith"))
                     .thenReturn(Optional.of(trainerEntity));
             when(trainerRepository.save(any(TrainerEntity.class)))
@@ -219,7 +228,7 @@ class TrainerServiceImplTest {
                     .thenReturn(updateTrainerProfileResponse);
 
             // Act
-            UpdateTrainerProfileResponse result = trainerService.updateTrainer("John.Smith", "password123", updateTrainerRequest);
+            UpdateTrainerProfileResponse result = trainerService.updateTrainer("John.Smith", authentication, updateTrainerRequest);
 
             // Assert
             assertNotNull(result);
@@ -231,7 +240,7 @@ class TrainerServiceImplTest {
         void testUpdateTrainerDeactivatesProfileWhenIsActiveFalse() {
             // Arrange
             updateTrainerRequest.setIsActive(false);
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainerRepository.findByUserUsername("John.Smith"))
                     .thenReturn(Optional.of(trainerEntity));
             when(trainerRepository.save(any(TrainerEntity.class)))
@@ -240,7 +249,7 @@ class TrainerServiceImplTest {
                     .thenReturn(updateTrainerProfileResponse);
 
             // Act
-            trainerService.updateTrainer("John.Smith", "password123", updateTrainerRequest);
+            trainerService.updateTrainer("John.Smith", authentication, updateTrainerRequest);
 
             // Assert
             verify(userService).deactivateUserProfile("John.Smith");
@@ -250,24 +259,44 @@ class TrainerServiceImplTest {
         @DisplayName("Should throw AuthenticationException for invalid credentials")
         void testUpdateTrainerThrowsExceptionForInvalidCredentials() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainerService.updateTrainer("John.Smith", "wrongPassword", updateTrainerRequest));
+                    () -> trainerService.updateTrainer("John.Smith", authentication, updateTrainerRequest));
         }
 
         @Test
         @DisplayName("Should throw exception when trainer not found")
         void testUpdateTrainerThrowsExceptionWhenTrainerNotFound() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainerRepository.findByUserUsername("John.Smith"))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
             assertThrows(EntityNotFoundException.class,
-                    () -> trainerService.updateTrainer("John.Smith", "password123", updateTrainerRequest));
+                    () -> trainerService.updateTrainer("John.Smith", authentication, updateTrainerRequest));
+        }
+
+        @Test
+        @DisplayName("Should activate profile when isActive is true")
+        void testUpdateTrainerActivatesProfileWhenIsActiveTrue() {
+            // Arrange
+            updateTrainerRequest.setFirstName(null);
+            updateTrainerRequest.setLastName(null);
+            updateTrainerRequest.setIsActive(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(trainerRepository.findByUserUsername("John.Smith")).thenReturn(Optional.of(trainerEntity));
+            when(trainerRepository.save(any(TrainerEntity.class))).thenReturn(trainerEntity);
+            when(trainerMapper.toUpdateTrainerProfileResponse(trainerEntity)).thenReturn(updateTrainerProfileResponse);
+
+            // Act
+            trainerService.updateTrainer("John.Smith", authentication, updateTrainerRequest);
+
+            // Assert
+            verify(userService).activateUserProfile("John.Smith");
         }
     }
 
@@ -279,14 +308,14 @@ class TrainerServiceImplTest {
         @DisplayName("Should get trainer by username successfully")
         void testGetTrainerByUsernameSuccess() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainerRepository.findByUserUsername("John.Smith"))
                     .thenReturn(Optional.of(trainerEntity));
             when(trainerMapper.toGetTrainerProfileResponse(trainerEntity))
                     .thenReturn(getTrainerProfileResponse);
 
             // Act
-            GetTrainerProfileResponse result = trainerService.getTrainerByUsername("John.Smith", "password123");
+            GetTrainerProfileResponse result = trainerService.getTrainerByUsername("John.Smith", authentication);
 
             // Assert
             assertNotNull(result);
@@ -299,20 +328,21 @@ class TrainerServiceImplTest {
         void testGetTrainerByUsernameThrowsExceptionForNullUsername() {
             // Act & Assert
             assertThrows(IllegalArgumentException.class,
-                    () -> trainerService.getTrainerByUsername(null, "password"));
+                    () -> trainerService.getTrainerByUsername(null, authentication));
             assertThrows(IllegalArgumentException.class,
-                    () -> trainerService.getTrainerByUsername("   ", "password"));
+                    () -> trainerService.getTrainerByUsername("   ", authentication));
         }
 
         @Test
         @DisplayName("Should throw AuthenticationException for invalid credentials")
         void testGetTrainerByUsernameThrowsExceptionForInvalidCredentials() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainerService.getTrainerByUsername("John.Smith", "wrongPassword"));
+                    () -> trainerService.getTrainerByUsername("John.Smith", authentication));
         }
     }
 
@@ -324,11 +354,11 @@ class TrainerServiceImplTest {
         @DisplayName("Should deactivate trainer successfully")
         void testDeactivateTrainerSuccess() {
             // Arrange
-            when(userService.authenticateAnyUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(userService.deactivateUserProfile("John.Smith")).thenReturn(true);
 
             // Act
-            trainerService.deactivateTrainer("John.Smith", "password123");
+            trainerService.deactivateTrainer("John.Smith", authentication);
 
             // Assert
             verify(userService).deactivateUserProfile("John.Smith");
@@ -338,11 +368,25 @@ class TrainerServiceImplTest {
         @DisplayName("Should throw AuthenticationException for invalid credentials")
         void testDeactivateTrainerThrowsExceptionForInvalidCredentials() {
             // Arrange
-            when(userService.authenticateAnyUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainerService.deactivateTrainer("John.Smith", "wrongPassword"));
+                    () -> trainerService.deactivateTrainer("John.Smith", authentication));
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when trainer is already deactivated")
+        void testDeactivateTrainerThrowsExceptionWhenAlreadyDeactivated() {
+            // Arrange
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(userService.deactivateUserProfile("John.Smith")).thenReturn(false);
+
+            // Act & Assert
+            assertThrows(IllegalStateException.class,
+                    () -> trainerService.deactivateTrainer("John.Smith", authentication));
+            verify(userService).deactivateUserProfile("John.Smith");
         }
     }
 
@@ -354,11 +398,11 @@ class TrainerServiceImplTest {
         @DisplayName("Should activate trainer successfully")
         void testActivateTrainerSuccess() {
             // Arrange
-            when(userService.authenticateAnyUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(userService.activateUserProfile("John.Smith")).thenReturn(true);
 
             // Act
-            trainerService.activateTrainer("John.Smith", "password123");
+            trainerService.activateTrainer("John.Smith", authentication);
 
             // Assert
             verify(userService).activateUserProfile("John.Smith");
@@ -368,11 +412,25 @@ class TrainerServiceImplTest {
         @DisplayName("Should throw AuthenticationException for invalid credentials")
         void testActivateTrainerThrowsExceptionForInvalidCredentials() {
             // Arrange
-            when(userService.authenticateAnyUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainerService.activateTrainer("John.Smith", "wrongPassword"));
+                    () -> trainerService.activateTrainer("John.Smith", authentication));
+        }
+
+        @Test
+        @DisplayName("Should throw IllegalStateException when trainer is already active")
+        void testActivateTrainerThrowsExceptionWhenAlreadyActive() {
+            // Arrange
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(userService.activateUserProfile("John.Smith")).thenReturn(false);
+
+            // Act & Assert
+            assertThrows(IllegalStateException.class,
+                    () -> trainerService.activateTrainer("John.Smith", authentication));
+            verify(userService).activateUserProfile("John.Smith");
         }
     }
 
@@ -384,13 +442,13 @@ class TrainerServiceImplTest {
         @DisplayName("Should get available trainers successfully")
         void testGetAvailableTrainersForTraineeSuccess() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainerRepository.findAvailableTrainersForTrainee("trainee.username"))
                     .thenReturn(List.of(trainerEntity));
             when(trainerMapper.trainerEntityToTrainerSummary(trainerEntity)).thenReturn(trainerSummary);
 
             // Act
-            List<TrainerSummary> result = trainerService.getAvailableTrainersForTrainee("trainee.username", "password123");
+            List<TrainerSummary> result = trainerService.getAvailableTrainersForTrainee("trainee.username", authentication);
 
             // Assert
             assertNotNull(result);
@@ -402,20 +460,21 @@ class TrainerServiceImplTest {
         void testGetAvailableTrainersThrowsExceptionForNullUsername() {
             // Act & Assert
             assertThrows(IllegalArgumentException.class,
-                    () -> trainerService.getAvailableTrainersForTrainee(null, "password"));
+                    () -> trainerService.getAvailableTrainersForTrainee(null, authentication));
             assertThrows(IllegalArgumentException.class,
-                    () -> trainerService.getAvailableTrainersForTrainee("   ", "password"));
+                    () -> trainerService.getAvailableTrainersForTrainee("   ", authentication));
         }
 
         @Test
         @DisplayName("Should throw AuthenticationException for invalid credentials")
         void testGetAvailableTrainersThrowsExceptionForInvalidCredentials() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainerService.getAvailableTrainersForTrainee("trainee.username", "wrongPassword"));
+                    () -> trainerService.getAvailableTrainersForTrainee("trainee.username", authentication));
         }
     }
 
@@ -485,6 +544,24 @@ class TrainerServiceImplTest {
             // Act & Assert
             assertThrows(EntityNotFoundException.class,
                     () -> trainerService.getTrainerByUsername("nonexistent"));
+        }
+    }
+
+    @Nested
+    @DisplayName("isRegisteredAsTrainer Tests")
+    class IsRegisteredAsTrainerTests {
+
+        @Test
+        @DisplayName("Should trim names and return repository result")
+        void testIsRegisteredAsTrainerTrimsNames() {
+            when(trainerRepository.existsByUserFirstNameIgnoreCaseAndUserLastNameIgnoreCase("Jane", "Smith"))
+                    .thenReturn(true);
+
+            boolean result = trainerService.isRegisteredAsTrainer("  Jane  ", "  Smith  ");
+
+            assertTrue(result);
+            verify(trainerRepository)
+                    .existsByUserFirstNameIgnoreCaseAndUserLastNameIgnoreCase("Jane", "Smith");
         }
     }
 }

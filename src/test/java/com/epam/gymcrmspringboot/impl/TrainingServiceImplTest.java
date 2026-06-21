@@ -3,18 +3,18 @@ package com.epam.gymcrmspringboot.impl;
 import com.epam.gymcrmspringboot.dto.request.AddTrainingRequest;
 import com.epam.gymcrmspringboot.dto.request.GetTraineeTrainingsCriteriaRequest;
 import com.epam.gymcrmspringboot.dto.request.GetTrainerTrainingsCriteriaRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.response.GetTraineeTrainingsResponse;
 import com.epam.gymcrmspringboot.dto.response.GetTrainerTrainingsResponse;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
+import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.mapper.TrainingMapper;
 import com.epam.gymcrmspringboot.model.*;
 import com.epam.gymcrmspringboot.repository.TrainingCriteriaRepository;
 import com.epam.gymcrmspringboot.repository.TrainingRepository;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.service.TraineeService;
 import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.TrainingTypeService;
-import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.service.impl.TrainingServiceImpl;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ class TrainingServiceImplTest {
     private TrainingCriteriaRepository trainingCriteriaRepository;
 
     @Mock
-    private UserService userService;
+    private AuthenticationService authenticationService;
 
     @Mock
     private TrainingMapper trainingMapper;
@@ -73,9 +74,12 @@ class TrainingServiceImplTest {
     private TrainingTypeEntity trainingTypeEntity;
     private UserEntity trainerUserEntity;
     private UserEntity traineeUserEntity;
+    private Authentication authentication;
 
     @BeforeEach
     void setUp() {
+        authentication = mock(Authentication.class);
+
         addTrainingRequest = new AddTrainingRequest(
                 "trainee.user",
                 "trainer.user",
@@ -141,14 +145,14 @@ class TrainingServiceImplTest {
         @DisplayName("Should add training successfully")
         void testAddTrainingSuccess() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(traineeService.getTraineeByUsername("trainee.user")).thenReturn(traineeEntity);
             when(trainerService.getTrainerByUsername("trainer.user")).thenReturn(trainerEntity);
             when(trainingTypeService.getTrainingTypeByName("Yoga")).thenReturn(trainingTypeEntity);
             when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(trainingEntity);
 
             // Act
-            trainingService.addTraining(addTrainingRequest, "trainerPassword");
+            trainingService.addTraining(addTrainingRequest, authentication);
 
             // Assert
             ArgumentCaptor<TrainingEntity> captor = ArgumentCaptor.forClass(TrainingEntity.class);
@@ -165,11 +169,12 @@ class TrainingServiceImplTest {
         @DisplayName("Should throw AuthenticationException for invalid trainer credentials")
         void testAddTrainingThrowsExceptionForInvalidCredentials() {
             // Arrange
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainingService.addTraining(addTrainingRequest, "wrongPassword"));
+                    () -> trainingService.addTraining(addTrainingRequest, authentication));
         }
 
         @Test
@@ -178,14 +183,41 @@ class TrainingServiceImplTest {
             // Arrange
             trainerEntity.setSpecialization(null);
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(traineeService.getTraineeByUsername("trainee.user")).thenReturn(traineeEntity);
             when(trainerService.getTrainerByUsername("trainer.user")).thenReturn(trainerEntity);
 
             // Act & Assert
             assertThrows(IllegalArgumentException.class,
-                    () -> trainingService.addTraining(addTrainingRequest, "trainerPassword"));
+                    () -> trainingService.addTraining(addTrainingRequest, authentication));
             verify(trainingRepository, never()).save(any(TrainingEntity.class));
+        }
+
+        @Test
+        @DisplayName("Should throw EntityNotFoundException when trainee does not exist")
+        void testAddTrainingThrowsExceptionWhenTraineeNotFound() {
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(traineeService.getTraineeByUsername("trainee.user"))
+                    .thenThrow(new EntityNotFoundException("Trainee not found"));
+
+            assertThrows(EntityNotFoundException.class,
+                    () -> trainingService.addTraining(addTrainingRequest, authentication));
+            verifyNoInteractions(trainerService, trainingTypeService);
+            verify(trainingRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should throw EntityNotFoundException when trainer does not exist")
+        void testAddTrainingThrowsExceptionWhenTrainerNotFound() {
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(traineeService.getTraineeByUsername("trainee.user")).thenReturn(traineeEntity);
+            when(trainerService.getTrainerByUsername("trainer.user"))
+                    .thenThrow(new EntityNotFoundException("Trainer not found"));
+
+            assertThrows(EntityNotFoundException.class,
+                    () -> trainingService.addTraining(addTrainingRequest, authentication));
+            verifyNoInteractions(trainingTypeService);
+            verify(trainingRepository, never()).save(any());
         }
     }
 
@@ -203,7 +235,7 @@ class TrainingServiceImplTest {
             criteriaRequest.setTrainingType("Yoga");
             criteriaRequest.setTrainerName("  John  ");
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainingCriteriaRepository.findTraineeTrainings(
                     eq("trainee.user"), eq(LocalDate.of(2024, 1, 1)), eq(LocalDate.of(2024, 12, 31)), eq("Yoga"), eq("John")))
                     .thenReturn(List.of(trainingEntity));
@@ -211,7 +243,8 @@ class TrainingServiceImplTest {
                     .thenReturn(new GetTraineeTrainingsResponse());
 
             // Act
-            List<GetTraineeTrainingsResponse> result = trainingService.getTraineeTrainings("trainee.user", "traineePassword", criteriaRequest);
+            List<GetTraineeTrainingsResponse> result = trainingService.getTraineeTrainings(
+                    "trainee.user", authentication, criteriaRequest);
 
             // Assert
             assertNotNull(result);
@@ -225,11 +258,12 @@ class TrainingServiceImplTest {
             // Arrange
             GetTraineeTrainingsCriteriaRequest criteriaRequest = new GetTraineeTrainingsCriteriaRequest();
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainingService.getTraineeTrainings("trainee.user", "wrongPassword", criteriaRequest));
+                    () -> trainingService.getTraineeTrainings("trainee.user", authentication, criteriaRequest));
         }
 
         @Test
@@ -238,7 +272,7 @@ class TrainingServiceImplTest {
             // Arrange
             GetTraineeTrainingsCriteriaRequest criteriaRequest = new GetTraineeTrainingsCriteriaRequest();
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainingCriteriaRepository.findTraineeTrainings(
                     eq("trainee.user"), isNull(), isNull(), isNull(), isNull()))
                     .thenReturn(List.of(trainingEntity));
@@ -246,7 +280,8 @@ class TrainingServiceImplTest {
                     .thenReturn(new GetTraineeTrainingsResponse());
 
             // Act
-            List<GetTraineeTrainingsResponse> result = trainingService.getTraineeTrainings("trainee.user", "traineePassword", criteriaRequest);
+            List<GetTraineeTrainingsResponse> result = trainingService.getTraineeTrainings(
+                    "trainee.user", authentication, criteriaRequest);
 
             // Assert
             assertNotNull(result);
@@ -267,7 +302,7 @@ class TrainingServiceImplTest {
             criteriaRequest.setToDate(LocalDate.of(2024, 12, 31));
             criteriaRequest.setTraineeName("  Jane  ");
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainingCriteriaRepository.findTrainerTrainings(
                     eq("trainer.user"), eq(LocalDate.of(2024, 1, 1)), eq(LocalDate.of(2024, 12, 31)), eq("Jane")))
                     .thenReturn(List.of(trainingEntity));
@@ -275,7 +310,8 @@ class TrainingServiceImplTest {
                     .thenReturn(new GetTrainerTrainingsResponse());
 
             // Act
-            List<GetTrainerTrainingsResponse> result = trainingService.getTrainerTrainings("trainer.user", "trainerPassword", criteriaRequest);
+            List<GetTrainerTrainingsResponse> result = trainingService.getTrainerTrainings(
+                    "trainer.user", authentication, criteriaRequest);
 
             // Assert
             assertNotNull(result);
@@ -289,11 +325,12 @@ class TrainingServiceImplTest {
             // Arrange
             GetTrainerTrainingsCriteriaRequest criteriaRequest = new GetTrainerTrainingsCriteriaRequest();
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(false);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(authenticationService).assertAuthenticatedUser(any(), any());
 
             // Act & Assert
             assertThrows(AuthenticationException.class,
-                    () -> trainingService.getTrainerTrainings("trainer.user", "wrongPassword", criteriaRequest));
+                    () -> trainingService.getTrainerTrainings("trainer.user", authentication, criteriaRequest));
         }
 
         @Test
@@ -302,7 +339,7 @@ class TrainingServiceImplTest {
             // Arrange
             GetTrainerTrainingsCriteriaRequest criteriaRequest = new GetTrainerTrainingsCriteriaRequest();
 
-            when(userService.authenticateActiveUser(any(LoginRequest.class))).thenReturn(true);
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(trainingCriteriaRepository.findTrainerTrainings(
                     eq("trainer.user"), isNull(), isNull(), isNull()))
                     .thenReturn(List.of(trainingEntity));
@@ -310,7 +347,8 @@ class TrainingServiceImplTest {
                     .thenReturn(new GetTrainerTrainingsResponse());
 
             // Act
-            List<GetTrainerTrainingsResponse> result = trainingService.getTrainerTrainings("trainer.user", "trainerPassword", criteriaRequest);
+            List<GetTrainerTrainingsResponse> result = trainingService.getTrainerTrainings(
+                    "trainer.user", authentication, criteriaRequest);
 
             // Assert
             assertNotNull(result);
@@ -347,4 +385,3 @@ class TrainingServiceImplTest {
     }
 
 }
-

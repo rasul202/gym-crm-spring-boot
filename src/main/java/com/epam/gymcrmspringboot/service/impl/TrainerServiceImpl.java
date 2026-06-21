@@ -1,10 +1,8 @@
 package com.epam.gymcrmspringboot.service.impl;
 
 import com.epam.gymcrmspringboot.dto.request.CreateTrainerRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.request.UpdateTrainerProfileRequest;
 import com.epam.gymcrmspringboot.dto.response.*;
-import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.mapper.TrainerMapper;
 import com.epam.gymcrmspringboot.mapper.UserMapper;
@@ -15,6 +13,7 @@ import com.epam.gymcrmspringboot.repository.TrainerRepository;
 import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.TrainingTypeService;
 import com.epam.gymcrmspringboot.service.UserService;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
 import lombok.AccessLevel;
@@ -22,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,23 +36,12 @@ public class TrainerServiceImpl implements TrainerService {
 
     TrainerRepository trainerRepository;
     UserService userService;
+    AuthenticationService authenticationService;
     RequestValidator requestValidator;
     TrainerMapper trainerMapper;
     UserMapper userMapper;
     TrainingTypeService trainingTypeService;
     TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
-
-    private void authenticateActiveUser(String username, String password) {
-        if (!userService.authenticateActiveUser(LoginRequest.builder().username(username).password(password).build())) {
-            throw new AuthenticationException("Invalid username or password for trainer user profile: " + username);
-        }
-    }
-
-    private void authenticateAnyUser(String username, String password) {
-        if (!userService.authenticateAnyUser(LoginRequest.builder().username(username).password(password).build())) {
-            throw new AuthenticationException("Invalid username or password for trainer user profile: " + username);
-        }
-    }
 
     @Override
     @Transactional
@@ -82,10 +71,10 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional
-    public UpdateTrainerProfileResponse updateTrainer(String username, String password, UpdateTrainerProfileRequest request) {
+    public UpdateTrainerProfileResponse updateTrainer(String username, Authentication authentication, UpdateTrainerProfileRequest request) {
         LOGGER.info("Update trainer operation has been started for username={}", username);
         requestValidator.validate(request);
-        authenticateActiveUser(username, password);
+        authenticationService.assertAuthenticatedUser(username, authentication);
 
         boolean hasFirstName = request.getFirstName() != null && !request.getFirstName().isBlank();
         boolean hasLastName = request.getLastName() != null && !request.getLastName().isBlank();
@@ -116,13 +105,13 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional(readOnly = true)
-    public GetTrainerProfileResponse getTrainerByUsername(String username, String password) {
+    public GetTrainerProfileResponse getTrainerByUsername(String username, Authentication authentication) {
         LOGGER.info("Get trainer profile operation has been started for username={}", username);
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("username cannot be blank or null");
         }
 
-        authenticateActiveUser(username, password);
+        authenticationService.assertAuthenticatedUser(username, authentication);
         TrainerEntity trainer = getTrainerByUsername(username);
         LOGGER.debug("Fetched Trainer profile username={}", username);
         return trainerMapper.toGetTrainerProfileResponse(trainer);
@@ -130,9 +119,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional
-    public void deactivateTrainer(String username, String password) {
+    public void deactivateTrainer(String username, Authentication authentication) {
         LOGGER.info("Deactivate trainer operation has been started for username={}", username);
-        authenticateAnyUser(username, password);
+        authenticationService.assertAuthenticatedUser(username, authentication);
         if (userService.deactivateUserProfile(username)) {
             LOGGER.info("Deactivated Trainer username={}", username);
         } else {
@@ -142,9 +131,9 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional
-    public void activateTrainer(String username, String password) {
+    public void activateTrainer(String username, Authentication authentication) {
         LOGGER.info("Activate trainer operation has been started for username={}", username);
-        authenticateAnyUser(username, password);
+        authenticationService.assertAuthenticatedUser(username, authentication);
         if (userService.activateUserProfile(username)) {
             LOGGER.info("Activated Trainer username={}", username);
         } else {
@@ -155,13 +144,13 @@ public class TrainerServiceImpl implements TrainerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, String password) {
+    public List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, Authentication authentication) {
         LOGGER.info("Get available trainers operation has been started for traineeUsername={}", traineeUsername);
         if (traineeUsername == null || traineeUsername.isBlank()) {
             throw new IllegalArgumentException("traineeUsername must not be blank");
         }
 
-        authenticateActiveUser(traineeUsername, password);
+        authenticationService.assertAuthenticatedUser(traineeUsername, authentication);
         return trainerRepository.findAvailableTrainersForTrainee(traineeUsername).stream()
                 .map(trainerMapper::trainerEntityToTrainerSummary)
                 .toList();

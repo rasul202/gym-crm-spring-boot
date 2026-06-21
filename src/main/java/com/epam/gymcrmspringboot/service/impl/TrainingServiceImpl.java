@@ -3,11 +3,9 @@ package com.epam.gymcrmspringboot.service.impl;
 
 import com.epam.gymcrmspringboot.dto.request.GetTraineeTrainingsCriteriaRequest;
 import com.epam.gymcrmspringboot.dto.request.GetTrainerTrainingsCriteriaRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.request.AddTrainingRequest;
 import com.epam.gymcrmspringboot.dto.response.GetTraineeTrainingsResponse;
 import com.epam.gymcrmspringboot.dto.response.GetTrainerTrainingsResponse;
-import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.mapper.TrainingMapper;
 import com.epam.gymcrmspringboot.model.TraineeEntity;
 import com.epam.gymcrmspringboot.model.TrainerEntity;
@@ -16,12 +14,14 @@ import com.epam.gymcrmspringboot.model.TrainingTypeEntity;
 import com.epam.gymcrmspringboot.repository.TrainingCriteriaRepository;
 import com.epam.gymcrmspringboot.repository.TrainingRepository;
 import com.epam.gymcrmspringboot.service.*;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +36,7 @@ public class TrainingServiceImpl implements TrainingService {
 
     TrainingRepository trainingRepository;
     TrainingCriteriaRepository trainingCriteriaRepository;
-    UserService userService;
+    AuthenticationService authenticationService;
     TrainingMapper trainingMapper;
     RequestValidator requestValidator;
     TrainingTypeService trainingTypeService;
@@ -46,7 +46,7 @@ public class TrainingServiceImpl implements TrainingService {
     public TrainingServiceImpl(
             TrainingRepository trainingRepository,
             TrainingCriteriaRepository trainingCriteriaRepository,
-            UserService userService,
+            AuthenticationService authenticationService,
             TrainingMapper trainingMapper,
             RequestValidator requestValidator,
             TrainingTypeService trainingTypeService,
@@ -54,7 +54,7 @@ public class TrainingServiceImpl implements TrainingService {
             @Lazy TraineeService traineeService) {
         this.trainingRepository = trainingRepository;
         this.trainingCriteriaRepository = trainingCriteriaRepository;
-        this.userService = userService;
+        this.authenticationService = authenticationService;
         this.trainingMapper = trainingMapper;
         this.requestValidator = requestValidator;
         this.trainingTypeService = trainingTypeService;
@@ -62,22 +62,15 @@ public class TrainingServiceImpl implements TrainingService {
         this.traineeService = traineeService;
     }
 
-    private void authenticate(String username, String password) {
-        if (!userService.authenticateActiveUser(LoginRequest.builder().username(username).password(password).build())) {
-            throw new AuthenticationException("Invalid username or password for user profile: " + username);
-        }
-    }
-
-
     @Override
     @Transactional
-    public void addTraining(AddTrainingRequest request, String trainerPassword) {
+    public void addTraining(AddTrainingRequest request, Authentication authentication) {
         LOGGER.info("Add training operation has been started for trainerUsername={} traineeUsername={}",
                 request == null ? null : request.getTrainerUsername(),
                 request == null ? null : request.getTraineeUsername());
 
         requestValidator.validate(request);
-        authenticate(request.getTrainerUsername(), trainerPassword);
+        authenticationService.assertAuthenticatedUser(request.getTrainerUsername(), authentication);
 
         TraineeEntity trainee = traineeService.getTraineeByUsername(request.getTraineeUsername());
 
@@ -108,11 +101,11 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetTraineeTrainingsResponse> getTraineeTrainings(String traineeUsername , String password, GetTraineeTrainingsCriteriaRequest criteriaRequest) {
+    public List<GetTraineeTrainingsResponse> getTraineeTrainings(String traineeUsername , Authentication authentication, GetTraineeTrainingsCriteriaRequest criteriaRequest) {
         LOGGER.info("Get trainee trainings operation has been started for traineeUsername={}", traineeUsername);
 
         requestValidator.validate(criteriaRequest);
-        authenticate(traineeUsername, password);
+        authenticationService.assertAuthenticatedUser(traineeUsername, authentication);
 
         List<TrainingEntity> trainings = trainingCriteriaRepository.findTraineeTrainings(
                         traineeUsername,
@@ -129,10 +122,10 @@ public class TrainingServiceImpl implements TrainingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetTrainerTrainingsResponse> getTrainerTrainings(String trainerUsername , String password , GetTrainerTrainingsCriteriaRequest criteriaRequest) {
+    public List<GetTrainerTrainingsResponse> getTrainerTrainings(String trainerUsername , Authentication authentication , GetTrainerTrainingsCriteriaRequest criteriaRequest) {
         LOGGER.info("Get trainer trainings operation has been started for trainerUsername={}", trainerUsername);
         requestValidator.validate(criteriaRequest);
-        authenticate(trainerUsername, password);
+        authenticationService.assertAuthenticatedUser(trainerUsername, authentication);
 
         return trainingCriteriaRepository.findTrainerTrainings(
                         trainerUsername,
