@@ -16,6 +16,7 @@ import com.epam.gymcrmspringboot.service.TraineeService;
 import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.TrainingTypeService;
 import com.epam.gymcrmspringboot.service.impl.TrainingServiceImpl;
+import com.epam.gymcrmspringboot.service.impl.WorkloadClientServiceImpl;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +64,9 @@ class TrainingServiceImplTest {
 
     @Mock
     private TraineeService traineeService;
+
+    @Mock
+    private WorkloadClientServiceImpl workloadClientServiceImpl;
 
     @InjectMocks
     private TrainingServiceImpl trainingService;
@@ -163,6 +167,14 @@ class TrainingServiceImplTest {
             assertEquals(traineeEntity, saved.getTrainee());
             assertEquals(trainerEntity, saved.getTrainer());
             verify(requestValidator).validate(addTrainingRequest);
+            verify(workloadClientServiceImpl).notifyWorkloadAdd(
+                    "trainer.user",
+                    "John",
+                    "Smith",
+                    true,
+                    LocalDate.of(2024, 1, 15),
+                    60
+            );
         }
 
         @Test

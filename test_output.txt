@@ -1,0 +1,1135 @@
+﻿[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.epam:gym-crm-spring-boot:jar:0.0.1-SNAPSHOT
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.postgresql:postgresql:jar -> duplicate declaration of version (?) @ line 173, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] 
+[INFO] --------------------< com.epam:gym-crm-spring-boot >--------------------
+[INFO] Building gym-crm-spring-boot 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (prepare-agent) @ gym-crm-spring-boot ---
+[INFO] argLine set to -javaagent:C:\\Users\\Lenovo\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=C:\\Users\\Lenovo\\IdeaProjects\\gym-crm-spring-boot\\target\\jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ gym-crm-spring-boot ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 11 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ gym-crm-spring-boot ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ gym-crm-spring-boot ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ gym-crm-spring-boot ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 32 source files with javac [debug parameters release 17] to target\test-classes
+[INFO] /C:/Users/Lenovo/IdeaProjects/gym-crm-spring-boot/src/test/java/com/epam/gymcrmspringboot/impl/AuthenticationServiceImplTest.java: C:\Users\Lenovo\IdeaProjects\gym-crm-spring-boot\src\test\java\com\epam\gymcrmspringboot\impl\AuthenticationServiceImplTest.java uses unchecked or unsafe operations.
+[INFO] /C:/Users/Lenovo/IdeaProjects/gym-crm-spring-boot/src/test/java/com/epam/gymcrmspringboot/impl/AuthenticationServiceImplTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- surefire:3.5.5:test (default-test) @ gym-crm-spring-boot ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running JwtAuthenticationFilter Tests
+mvn : Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap 
+classpath has been appended
+At line:2 char:56
++ ... Users\Lenovo\IdeaProjects\gym-crm-spring-boot"; mvn test 2>&1 | Out-F ...
++                                                     ~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Java HotSpot(TM...s been appended:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.638 s -- in JwtAuthenticationFilter Tests
+[INFO] Running AuthController Tests
+[INFO] Running POST /authentication/login
+2026-07-06 17:33:10 INFO  [main] [tx=N/A] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-07-06 17:33:13 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:13 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:13 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 12 ms
+2026-07-06 17:33:14 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[username]
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:14 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:14 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Request parsing/validation failed txId=N/A message=Required request body is missing: public org.springframework.http.ResponseEntity<com.epam.gymcrmspringboot.dto.response.LoginResponse> com.epam.gymcrmspringboot.controller.AuthController.login(com.epam.gymcrmspringboot.dto.request.LoginRequest)
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:14 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:14 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[password]
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.348 s -- in POST /authentication/login
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.356 s -- in AuthController Tests
+[INFO] Running TraineeController Tests
+[INFO] Running PUT /trainees/{username}/trainers
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainerUsernames]
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainerUsernames]
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.482 s -- in PUT /trainees/{username}/trainers
+[INFO] Running PUT /trainees/{username}
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainee not found
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[dateOfBirth]
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[firstName]
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:15 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[isActive]
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:15 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.461 s -- in PUT /trainees/{username}
+[INFO] Running POST /trainees
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Opposite-role registration conflict txId=N/A message=Cannot register as trainee: user is already registered as trainer
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[dateOfBirth]
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 2 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[firstName]
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[lastName]
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.271 s -- in POST /trainees
+[INFO] Running GET /trainees/{username}
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainee not found
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.131 s -- in GET /trainees/{username}
+[INFO] Running DELETE /trainees/{username}
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainee not found
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in DELETE /trainees/{username}
+[INFO] Running GET /trainees/{traineeUsername}/available-trainers
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.081 s -- in GET /trainees/{traineeUsername}/available-trainers
+[INFO] Running PATCH /trainees/{username}/status
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Request parsing/validation failed txId=N/A message=Required request parameter 'isActive' for method parameter type Boolean is not present
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.118 s -- in PATCH /trainees/{username}/status
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.674 s -- in TraineeController Tests
+[INFO] Running TrainerController Tests
+[INFO] Running PATCH /trainers/{username}/status
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:16 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Request parsing/validation failed txId=N/A message=Required request parameter 'isActive' for method parameter type Boolean is not present
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:16 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.261 s -- in PATCH /trainers/{username}/status
+[INFO] Running POST /trainers
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Opposite-role registration conflict txId=N/A message=Cannot register as trainer: user is already registered as trainee
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[specialization]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[firstName]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[lastName]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Request parsing/validation failed txId=N/A message=Required request body is missing: public org.springframework.http.ResponseEntity<com.epam.gymcrmspringboot.dto.response.RegistrationResponse> com.epam.gymcrmspringboot.controller.TrainerController.registerTrainer(com.epam.gymcrmspringboot.dto.request.CreateTrainerRequest)
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.196 s -- in POST /trainers
+[INFO] Running PUT /trainers/{username}
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainer not found
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[firstName]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 2 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[lastName]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[isActive]
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.193 s -- in PUT /trainers/{username}
+[INFO] Running GET /trainers/{username}
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainer not found
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 s -- in GET /trainers/{username}
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.737 s -- in TrainerController Tests
+[INFO] Running TrainingController Tests
+[INFO] Running POST /trainings
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainingName]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainerUsername]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainingDuration]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainingDate]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainee not found
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[traineeUsername]
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:17 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[trainingDuration]
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.439 s -- in POST /trainings
+[INFO] Running GET /trainings/trainers/{username}
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:17 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=Trainer not found
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[dateRangeValid]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.148 s -- in GET /trainings/trainers/{username}
+[INFO] Running DELETE /trainings/{id}
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:18 ERROR [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Unexpected error txId=N/A message=External workload service returned 503 for WorkloadClient#notifyWorkload: workload service unavailable
+com.epam.gymcrmspringboot.exception.TrainerWorkloadException: External workload service returned 503 for WorkloadClient#notifyWorkload: workload service unavailable
+	at com.epam.gymcrmspringboot.controller.TrainingController.deleteTraining(TrainingController.java:59)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:925)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:651)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at org.springframework.test.web.servlet.TestDispatcherServlet.service(TestDispatcherServlet.java:72)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.springframework.mock.web.MockFilterChain$ServletFilterProxy.doFilter(MockFilterChain.java:160)
+	at org.springframework.mock.web.MockFilterChain.doFilter(MockFilterChain.java:127)
+	at org.springframework.test.web.servlet.MockMvc.perform(MockMvc.java:199)
+	at com.epam.gymcrmspringboot.controller.TrainingControllerTest$DeleteTrainingTests.shouldReturn502WhenWorkloadServiceRejectsDeleteTraining(TrainingControllerTest.java:423)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:148)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$0(TestMethodTestDescriptor.java:219)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:215)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:157)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:70)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:176)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$2(InterceptingLauncher.java:57)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:56)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.apache.maven.surefire.api.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:125)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.executeWithCancellationToken(LauncherAdapter.java:68)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.execute(LauncherAdapter.java:54)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:203)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:168)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:136)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.058 s <<< FAILURE! -- in DELETE /trainings/{id}
+[ERROR] com.epam.gymcrmspringboot.controller.TrainingControllerTest.shouldReturn502WhenWorkloadServiceRejectsDeleteTraining -- Time elapsed: 0.046 s <<< FAILURE!
+java.lang.AssertionError: Status expected:<502> but was:<500>
+	at org.springframework.test.util.AssertionErrors.fail(AssertionErrors.java:62)
+	at org.springframework.test.util.AssertionErrors.assertEquals(AssertionErrors.java:129)
+	at org.springframework.test.web.servlet.result.StatusResultMatchers.lambda$matcher$0(StatusResultMatchers.java:600)
+	at org.springframework.test.web.servlet.MockMvc$1.andExpect(MockMvc.java:212)
+	at com.epam.gymcrmspringboot.controller.TrainingControllerTest$DeleteTrainingTests.shouldReturn502WhenWorkloadServiceRejectsDeleteTraining(TrainingControllerTest.java:424)
+
+[INFO] Running GET /trainings/trainees/{username}
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[dateRangeValid]
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid credentials
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.210 s -- in GET /trainings/trainees/{username}
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.865 s -- in TrainingController Tests
+[INFO] Running TrainingTypeController Tests
+[INFO] Running GET /training-types
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2026-07-06 17:33:18 ERROR [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Unexpected error txId=N/A message=Database connection lost
+java.lang.RuntimeException: Database connection lost
+	at com.epam.gymcrmspringboot.controller.TrainingTypeController.getAllTrainingTypes(TrainingTypeController.java:34)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at org.springframework.test.web.servlet.TestDispatcherServlet.service(TestDispatcherServlet.java:72)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.springframework.mock.web.MockFilterChain$ServletFilterProxy.doFilter(MockFilterChain.java:160)
+	at org.springframework.mock.web.MockFilterChain.doFilter(MockFilterChain.java:127)
+	at org.springframework.test.web.servlet.MockMvc.perform(MockMvc.java:199)
+	at com.epam.gymcrmspringboot.controller.TrainingTypeControllerTest$GetAllTrainingTypesTests.shouldReturn500WhenServiceThrowsUnexpectedException(TrainingTypeControllerTest.java:114)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:148)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$0(TestMethodTestDescriptor.java:219)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:215)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:157)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:70)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:176)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$2(InterceptingLauncher.java:57)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:56)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:58)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:578)
+	at org.apache.maven.surefire.api.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:125)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.executeWithCancellationToken(LauncherAdapter.java:68)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.execute(LauncherAdapter.java:54)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:203)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:168)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:136)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.159 s -- in GET /training-types
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.161 s -- in TrainingTypeController Tests
+[INFO] Running UserController Tests
+[INFO] Running PUT /users/password
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=Invalid current password
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[username]
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Same password txId=N/A message=New password cannot be same as the old password
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Entity not found txId=N/A message=User not found: John.Doe
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[newPassword]
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Request parsing/validation failed txId=N/A message=Required request body is missing: public org.springframework.http.ResponseEntity<java.lang.Void> com.epam.gymcrmspringboot.controller.UserController.changePassword(com.epam.gymcrmspringboot.dto.request.ChangePasswordRequest,org.springframework.security.core.Authentication)
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Validation failed txId=N/A fields=[oldPassword]
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2026-07-06 17:33:18 INFO  [main] [tx=N/A] o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2026-07-06 17:33:18 WARN  [main] [tx=N/A] c.e.g.handler.GlobalExceptionHandler - Authentication failed txId=N/A message=User not found or inactive
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.301 s -- in PUT /users/password
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.304 s -- in UserController Tests
+[INFO] Running AuthenticationServiceImpl Tests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.261 s -- in AuthenticationServiceImpl Tests
+[INFO] Running LoginAttemptServiceImpl Tests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.130 s -- in LoginAttemptServiceImpl Tests
+[INFO] Running TraineeServiceImpl Tests
+[INFO] Running getTraineeByUsername (internal) Tests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.715 s -- in getTraineeByUsername (internal) Tests
+[INFO] Running deleteTrainee Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Delete trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Delete trainee operation has been started for username=null
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Delete trainee operation has been started for username=   
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Delete trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Deleted Trainee username=John.Doe
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 s -- in deleteTrainee Tests
+[INFO] Running registerTrainee Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Register trainee operation has been started for firstName=John lastName=Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Register trainee operation has been started for firstName=John lastName=Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Register trainee operation has been started for firstName=John lastName=Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Registered Trainee profile username=John.Doe
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.135 s -- in registerTrainee Tests
+[INFO] Running updateTrainee Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Updated Trainee username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Updated Trainee username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Updated Trainee username=John.Doe
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.056 s -- in updateTrainee Tests
+[INFO] Running deactivateTrainee Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Deactivate trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Deactivate trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Deactivate trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Deactivated Trainee username=John.Doe
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in deactivateTrainee Tests
+[INFO] Running activateTrainee Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Activate trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Activated Trainee username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Activate trainee operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Activate trainee operation has been started for username=John.Doe
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in activateTrainee Tests
+[INFO] Running isRegisteredAsTrainee Tests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in isRegisteredAsTrainee Tests
+[INFO] Running updateTraineeTrainers Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee trainers operation has been started for username=John.Doe trainerCount=3
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee trainers operation has been started for username=John.Doe trainerCount=1
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee trainers operation has been started for username=John.Doe trainerCount=2
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee trainers operation has been started for username=John.Doe trainerCount=1
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Update trainee trainers operation has been started for username=John.Doe trainerCount=0
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.073 s -- in updateTraineeTrainers Tests
+[INFO] Running getTraineeByUsername Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Get trainee profile operation has been started for username=null
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Get trainee profile operation has been started for username=   
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Get trainee profile operation has been started for username=John.Doe
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TraineeServiceImpl - Get trainee profile operation has been started for username=John.Doe
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in getTraineeByUsername Tests
+[INFO] Running getTraineeByUsernameWithTrainings (internal) Tests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in getTraineeByUsernameWithTrainings (internal) Tests
+[INFO] Running getAvailableTrainersForTrainee Tests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in getAvailableTrainersForTrainee Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.159 s -- in TraineeServiceImpl Tests
+[INFO] Running TrainerServiceImpl Tests
+[INFO] Running getAvailableTrainersForTrainee Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get available trainers operation has been started for traineeUsername=null
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get available trainers operation has been started for traineeUsername=   
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get available trainers operation has been started for traineeUsername=trainee.username
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get available trainers operation has been started for traineeUsername=trainee.username
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.362 s -- in getAvailableTrainersForTrainee Tests
+[INFO] Running isRegisteredAsTrainer Tests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in isRegisteredAsTrainer Tests
+[INFO] Running getTrainerByUsername (internal) Tests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in getTrainerByUsername (internal) Tests
+[INFO] Running registerTrainer Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Register trainer operation has been started for firstName=John lastName=Smith specialization=Yoga
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Register trainer operation has been started for firstName=John lastName=Smith specialization=Yoga
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Register trainer operation has been started for firstName=John lastName=Smith specialization=Yoga
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Register trainer operation has been started for firstName=John lastName=Smith specialization=Yoga
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Registered Trainer profile username=John.Smith
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in registerTrainer Tests
+[INFO] Running getTrainerByUsername Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get trainer profile operation has been started for username=null
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get trainer profile operation has been started for username=   
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get trainer profile operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Get trainer profile operation has been started for username=John.Smith
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in getTrainerByUsername Tests
+[INFO] Running activateTrainer Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Activate trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Activate trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Activated Trainer username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Activate trainer operation has been started for username=John.Smith
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in activateTrainer Tests
+[INFO] Running updateTrainer Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Update trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Updated Trainer username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Update trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Update trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Update trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Updated Trainer username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Update trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Updated Trainer username=John.Smith
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.050 s -- in updateTrainer Tests
+[INFO] Running deactivateTrainer Tests
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Deactivate trainer operation has been started for username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Deactivated Trainer username=John.Smith
+2026-07-06 17:33:20 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Deactivate trainer operation has been started for username=John.Smith
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainerServiceImpl - Deactivate trainer operation has been started for username=John.Smith
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in deactivateTrainer Tests
+[INFO] Running getAllTrainersUsernamesIn Tests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 s -- in getAllTrainersUsernamesIn Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.577 s -- in TrainerServiceImpl Tests
+[INFO] Running TrainingServiceImpl Tests
+[INFO] Running getTraineeTrainings Tests
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Get trainee trainings operation has been started for traineeUsername=trainee.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Get trainee trainings operation has been started for traineeUsername=trainee.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Get trainee trainings operation has been started for traineeUsername=trainee.user
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.710 s -- in getTraineeTrainings Tests
+[INFO] Running addTraining Tests
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Add training operation has been started for trainerUsername=trainer.user traineeUsername=trainee.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Add training operation has been started for trainerUsername=trainer.user traineeUsername=trainee.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Add training operation has been started for trainerUsername=trainer.user traineeUsername=trainee.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Created training id=1
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Add training operation has been started for trainerUsername=trainer.user traineeUsername=trainee.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Add training operation has been started for trainerUsername=trainer.user traineeUsername=trainee.user
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 s -- in addTraining Tests
+[INFO] Running getTrainerTrainings Tests
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Get trainer trainings operation has been started for trainerUsername=trainer.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Get trainer trainings operation has been started for trainerUsername=trainer.user
+2026-07-06 17:33:21 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingServiceImpl - Get trainer trainings operation has been started for trainerUsername=trainer.user
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in getTrainerTrainings Tests
+[INFO] Running internal delegation Tests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in internal delegation Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.841 s -- in TrainingServiceImpl Tests
+[INFO] Running TrainingTypeServiceImpl Tests
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=null
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=   
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=Yoga
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=  Yoga  
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=NonExistent
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get training type by name operation has been started for trainingTypeName=YOGA
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get all training types operation has been started
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.s.impl.TrainingTypeServiceImpl - Get all training types operation has been started
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.205 s -- in TrainingTypeServiceImpl Tests
+[INFO] Running UserDetailsServiceImpl Tests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.296 s -- in UserDetailsServiceImpl Tests
+[INFO] Running UserServiceImpl Tests
+[INFO] Running createUserProfile Tests
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been started for firstName=John lastName=Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Created User profile id=1, username=John.Doe2
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been completed for userId=1 username=John.Doe2
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been started for firstName=  John   lastName=  Doe  
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Created User profile id=1, username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been completed for userId=1 username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been started for firstName=John lastName=Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Created User profile id=1, username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been completed for userId=1 username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been started for firstName=John lastName=Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Created User profile id=1, username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Create user profile operation has been completed for userId=1 username=John.Doe
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.222 s -- in createUserProfile Tests
+[INFO] Running activateUserProfile Tests
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation has been started for username=nonexistent
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation has been started for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation skipped because user is already active username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation has been started for username=   
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation has been started for username=null
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation has been started for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Activate user profile operation has been completed for username=John.Doe
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.037 s -- in activateUserProfile Tests
+[INFO] Running deactivateUserProfile Tests
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation has been started for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation has been completed for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation has been started for username=   
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation has been started for username=null
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation has been started for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation skipped because user is already inactive username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Deactivate user profile operation has been started for username=nonexistent
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in deactivateUserProfile Tests
+[INFO] Running changePassword Tests
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Change password operation has been started for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Change password operation has been completed for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Change password operation has been started for username=John.Doe
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Change password operation has been started for username=nonexistent
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.service.impl.UserServiceImpl - Change password operation has been started for username=John.Doe
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.040 s -- in changePassword Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.341 s -- in UserServiceImpl Tests
+[INFO] Running LoginAttemptEventListener Tests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 s -- in LoginAttemptEventListener Tests
+[INFO] Running RestCallLoggingFilter tests
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.logging.RestCallLoggingFilter - REST call method=POST uri=/users/password query=username=John.Doe&password=*** status=200 durationMs=1 requestBody= responseBody={"message":"changed","password":"***"}
+2026-07-06 17:33:22 INFO  [main] [tx=N/A] c.e.g.logging.RestCallLoggingFilter - REST call method=GET uri=/users/login query=null status=401 durationMs=0 requestBody= responseBody={"message":"invalid credentials"}
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in RestCallLoggingFilter tests
+[INFO] Running TransactionCorrelationInterceptor tests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in TransactionCorrelationInterceptor tests
+[INFO] Running TraineeMapper Tests
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.026 s -- in TraineeMapper Tests
+[INFO] Running TrainerMapper Tests
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in TrainerMapper Tests
+[INFO] Running TrainingMapper Tests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in TrainingMapper Tests
+[INFO] Running UserMapper Tests
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in UserMapper Tests
+[INFO] Running TraineeRepository Tests
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest]: TraineeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest]: TraineeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest
+[INFO] Running findByUserUsernameAndUserIsActiveTrueWithTrainings Tests
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests]: FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests]: FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest]: TraineeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:33:23 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.6)
+
+2026-07-06 17:33:26 INFO  [main] [tx=N/A] c.e.g.r.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests - Starting TraineeRepositoryTest.FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests using Java 20.0.2 with PID 39480 (started by Lenovo in C:\Users\Lenovo\IdeaProjects\gym-crm-spring-boot)
+2026-07-06 17:33:26 INFO  [main] [tx=N/A] c.e.g.r.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests - The following 1 profile is active: "test"
+2026-07-06 17:33:30 INFO  [main] [tx=N/A] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-07-06 17:33:30 INFO  [main] [tx=N/A] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 188 ms. Found 5 JPA repository interfaces.
+2026-07-06 17:33:32 INFO  [main] [tx=N/A] o.s.cloud.context.scope.GenericScope - BeanFactory id=baed7047-294d-3426-9ab3-bebdabfb4458
+2026-07-06 17:33:34 INFO  [main] [tx=N/A] liquibase.integration - Liquibase did not run because 'shouldRun' property was set to false on springLiquibase Liquibase Spring bean.
+2026-07-06 17:33:35 INFO  [main] [tx=N/A] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-07-06 17:33:35 INFO  [main] [tx=N/A] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.12.Final
+2026-07-06 17:33:36 INFO  [main] [tx=N/A] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-07-06 17:33:36 INFO  [main] [tx=N/A] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-07-06 17:33:37 INFO  [main] [tx=N/A] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2026-07-06 17:33:37 INFO  [main] [tx=N/A] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-07-06 17:33:38 WARN  [main] [tx=N/A] org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-07-06 17:33:38 INFO  [main] [tx=N/A] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:testdb]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: TESTDB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-07-06 17:33:42 INFO  [main] [tx=N/A] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-07-06 17:33:42 INFO  [main] [tx=N/A] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-07-06 17:33:45 INFO  [main] [tx=N/A] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-07-06 17:33:50 WARN  [main] [tx=N/A] o.s.b.j.a.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-07-06 17:33:51 INFO  [main] [tx=N/A] o.s.c.o.FeignClientFactoryBean - For 'trainer-workload-service' URL not provided. Will try picking an instance via load-balancing.
+2026-07-06 17:33:53 INFO  [main] [tx=N/A] o.s.s.c.a.a.c.InitializeAuthenticationProviderBeanManagerConfigurer$InitializeAuthenticationProviderManagerConfigurer - Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2026-07-06 17:33:53 WARN  [main] [tx=N/A] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestClient.
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Application is null : false
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-07-06 17:33:58 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - The response status is 200
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1783344840314 with initial instances count: 2
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] o.s.c.n.e.s.EurekaServiceRegistry - Registering application GYM-CRM-SPRING-BOOT with eureka with status UP
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1783344840349, current=UP, previous=STARTING]
+2026-07-06 17:34:00 INFO  [DiscoveryClient-InstanceInfoReplicator-%d] [tx=N/A] c.netflix.discovery.DiscoveryClient - DiscoveryClient_GYM-CRM-SPRING-BOOT/DESKTOP-VD61OMQ:gym-crm-spring-boot: registering service...
+2026-07-06 17:34:00 INFO  [DiscoveryClient-InstanceInfoReplicator-%d] [tx=N/A] c.netflix.discovery.DiscoveryClient - DiscoveryClient_GYM-CRM-SPRING-BOOT/DESKTOP-VD61OMQ:gym-crm-spring-boot - registration status: 204
+2026-07-06 17:34:00 INFO  [main] [tx=N/A] c.e.g.r.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests - Started TraineeRepositoryTest.FindByUserUsernameAndUserIsActiveTrueWithTrainingsTests in 36.127 seconds (process running for 63.04)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 37.85 s -- in findByUserUsernameAndUserIsActiveTrueWithTrainings Tests
+[INFO] Running CRUD Operations
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$CrudOperations
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest]: TraineeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$CrudOperations
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.233 s -- in CRUD Operations
+[INFO] Running findByUserUsernameAndUserIsActiveTrue Tests
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueTests]: FindByUserUsernameAndUserIsActiveTrueTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueTests
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueTests]: FindByUserUsernameAndUserIsActiveTrueTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TraineeRepositoryTest]: TraineeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:01 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TraineeRepositoryTest$FindByUserUsernameAndUserIsActiveTrueTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.267 s -- in findByUserUsernameAndUserIsActiveTrue Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 39.19 s -- in TraineeRepository Tests
+[INFO] Running TrainerRepository Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest
+[INFO] Running findAvailableTrainersForTrainee Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindAvailableTrainersForTraineeTests]: FindAvailableTrainersForTraineeTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindAvailableTrainersForTraineeTests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindAvailableTrainersForTraineeTests]: FindAvailableTrainersForTraineeTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindAvailableTrainersForTraineeTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.193 s -- in findAvailableTrainersForTrainee Tests
+[INFO] Running findByUserUsername Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameTests]: FindByUserUsernameTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameTests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameTests]: FindByUserUsernameTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.145 s -- in findByUserUsername Tests
+[INFO] Running findByUserUsernameInAndUserIsActiveTrue Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameInAndUserIsActiveTrueTests]: FindByUserUsernameInAndUserIsActiveTrueTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameInAndUserIsActiveTrueTests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameInAndUserIsActiveTrueTests]: FindByUserUsernameInAndUserIsActiveTrueTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$FindByUserUsernameInAndUserIsActiveTrueTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.150 s -- in findByUserUsernameInAndUserIsActiveTrue Tests
+[INFO] Running Relationship Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$RelationshipTests]: RelationshipTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$RelationshipTests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$RelationshipTests]: RelationshipTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$RelationshipTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.074 s -- in Relationship Tests
+[INFO] Running CRUD Operations
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$CrudOperations
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainerRepositoryTest]: TrainerRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainerRepositoryTest$CrudOperations
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.114 s -- in CRUD Operations
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.701 s -- in TrainerRepository Tests
+[INFO] Running TrainingRepository Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest]: TrainingRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest]: TrainingRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest
+[INFO] Running Cascade Delete Tests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CascadeDeleteTests]: CascadeDeleteTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CascadeDeleteTests
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CascadeDeleteTests]: CascadeDeleteTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest]: TrainingRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CascadeDeleteTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.099 s -- in Cascade Delete Tests
+[INFO] Running CRUD Operations
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CrudOperations
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest]: TrainingRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:02 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$CrudOperations
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.099 s -- in CRUD Operations
+[INFO] Running Field Validation Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$FieldValidationTests]: FieldValidationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$FieldValidationTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$FieldValidationTests]: FieldValidationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest]: TrainingRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$FieldValidationTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.091 s -- in Field Validation Tests
+[INFO] Running Relationship Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$RelationshipTests]: RelationshipTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$RelationshipTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$RelationshipTests]: RelationshipTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingRepositoryTest]: TrainingRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingRepositoryTest$RelationshipTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.097 s -- in Relationship Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.409 s -- in TrainingRepository Tests
+[INFO] Running TrainingTypeRepository Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest
+[INFO] Running Edge Cases Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$EdgeCasesTests]: EdgeCasesTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$EdgeCasesTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$EdgeCasesTests]: EdgeCasesTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$EdgeCasesTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.119 s -- in Edge Cases Tests
+[INFO] Running CRUD Operations
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$CrudOperations
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$CrudOperations
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.115 s -- in CRUD Operations
+[INFO] Running Uniqueness Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$UniquenessTests]: UniquenessTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$UniquenessTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$UniquenessTests]: UniquenessTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$UniquenessTests
+2026-07-06 17:34:03 WARN  [main] [tx=N/A] org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 23505, SQLState: 23505
+2026-07-06 17:34:03 WARN  [main] [tx=N/A] org.hibernate.orm.jdbc.error - Unique index or primary key violation: "PUBLIC.CONSTRAINT_9 INDEX PUBLIC.CONSTRAINT_INDEX_9 ON PUBLIC.TRAINING_TYPE(TRAINING_TYPE_NAME NULLS FIRST) VALUES ( /* 34 */ 'Yoga' )"; SQL statement:
+insert into training_type (training_type_name,id) values (?,default) [23505-240]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.118 s -- in Uniqueness Tests
+[INFO] Running findByTrainingTypeNameIgnoreCase Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FindByTrainingTypeNameIgnoreCaseTests]: FindByTrainingTypeNameIgnoreCaseTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FindByTrainingTypeNameIgnoreCaseTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FindByTrainingTypeNameIgnoreCaseTests]: FindByTrainingTypeNameIgnoreCaseTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FindByTrainingTypeNameIgnoreCaseTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.104 s -- in findByTrainingTypeNameIgnoreCase Tests
+[INFO] Running Field Persistence Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FieldPersistenceTests]: FieldPersistenceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FieldPersistenceTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FieldPersistenceTests]: FieldPersistenceTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest]: TrainingTypeRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.TrainingTypeRepositoryTest$FieldPersistenceTests
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in Field Persistence Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.522 s -- in TrainingTypeRepository Tests
+[INFO] Running UserRepository Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest
+[INFO] Running findByUsername Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameTests]: FindByUsernameTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameTests]: FindByUsernameTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in findByUsername Tests
+[INFO] Running Default Values Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$DefaultValuesTests]: DefaultValuesTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$DefaultValuesTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$DefaultValuesTests]: DefaultValuesTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$DefaultValuesTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.029 s -- in Default Values Tests
+[INFO] Running Username Uniqueness Tests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$UsernameUniquenessTests]: UsernameUniquenessTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$UsernameUniquenessTests
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$UsernameUniquenessTests]: UsernameUniquenessTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$UsernameUniquenessTests
+2026-07-06 17:34:03 WARN  [main] [tx=N/A] org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 23505, SQLState: 23505
+2026-07-06 17:34:03 WARN  [main] [tx=N/A] org.hibernate.orm.jdbc.error - Unique index or primary key violation: "PUBLIC.CONSTRAINT_7 INDEX PUBLIC.CONSTRAINT_INDEX_7 ON PUBLIC.APP_USER(USERNAME NULLS FIRST) VALUES ( /* 66 */ 'John.Doe' )"; SQL statement:
+insert into app_user (first_name,is_active,last_name,password,username,id) values (?,?,?,?,?,default) [23505-240]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s -- in Username Uniqueness Tests
+[INFO] Running CRUD Operations
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$CrudOperations
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$CrudOperations]: CrudOperations does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:03 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$CrudOperations
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.087 s -- in CRUD Operations
+[INFO] Running findByUsernameAndIsActiveTrue Tests
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameAndIsActiveTrueTests]: FindByUsernameAndIsActiveTrueTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameAndIsActiveTrueTests
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameAndIsActiveTrueTests]: FindByUsernameAndIsActiveTrueTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.epam.gymcrmspringboot.repository.UserRepositoryTest]: UserRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.epam.gymcrmspringboot.GymCrmSpringBootApplication for test class com.epam.gymcrmspringboot.repository.UserRepositoryTest$FindByUsernameAndIsActiveTrueTests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.090 s -- in findByUsernameAndIsActiveTrue Tests
+[INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.364 s -- in UserRepository Tests
+[INFO] Running WorkloadClientServiceImpl Tests
+2026-07-06 17:34:04 WARN  [main] [tx=N/A] c.e.g.s.i.WorkloadClientServiceImpl - Workload circuit breaker state is OPEN. Workload server is not available; requests are blocked.
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] c.e.g.s.i.WorkloadClientServiceImpl - Workload circuit breaker state is HALF_OPEN. Limited test requests are allowed.
+2026-07-06 17:34:04 INFO  [main] [tx=N/A] c.e.g.s.i.WorkloadClientServiceImpl - Workload circuit breaker state is CLOSED. Normal traffic to workload server is resumed.
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.797 s -- in WorkloadClientServiceImpl Tests
+[INFO] Running JwtUtil Tests
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.392 s -- in JwtUtil Tests
+[INFO] Running UsernamePasswordUtil Tests
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.114 s -- in UsernamePasswordUtil Tests
+[INFO] Running RequestValidator Tests
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.339 s -- in RequestValidator Tests
+[INFO] Running TrainerTraineeRegistrationValidator Tests
+2026-07-06 17:34:05 WARN  [main] [tx=N/A] c.e.g.v.TrainerTraineeRegistrationValidator - Cannot register as trainer: user is already registered as trainee [firstName=John, lastName=Doe]
+2026-07-06 17:34:05 WARN  [main] [tx=N/A] c.e.g.v.TrainerTraineeRegistrationValidator - Cannot register as trainee: user is already registered as trainer [firstName=Jane, lastName=Smith]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in TrainerTraineeRegistrationValidator Tests
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   TrainingControllerTest.shouldReturn502WhenWorkloadServiceRejectsDeleteTraining Status expected:<502> but was:<500>
+[INFO] 
+[ERROR] Tests run: 308, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:30 min
+[INFO] Finished at: 2026-07-06T17:34:09+04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.5:test (default-test) on project gym-crm-spring-boot: There are test failures.
+[ERROR] 
+[ERROR] See C:\Users\Lenovo\IdeaProjects\gym-crm-spring-boot\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

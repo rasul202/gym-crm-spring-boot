@@ -2,6 +2,7 @@ package com.epam.gymcrmspringboot.handler;
 
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
+import com.epam.gymcrmspringboot.exception.ExternalServiceException;
 import com.epam.gymcrmspringboot.exception.SamePasswordException;
 import com.epam.gymcrmspringboot.exception.UserAlreadyRegisteredInOppositeRoleException;
 import com.epam.gymcrmspringboot.logging.TransactionContext;
@@ -88,6 +89,18 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.CONFLICT, ex.getMessage());
     }
 
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<Map<String, Object>> handleExternalServiceException(ExternalServiceException ex) {
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode());
+        HttpStatus responseStatus = status != null ? status : HttpStatus.BAD_GATEWAY;
+        LOGGER.warn("External service error txId={} source={} status={} message={}",
+                getTransactionIdForResponse(),
+                ex.getSourceService(),
+                ex.getStatusCode(),
+                ex.getMessage());
+        return buildError(responseStatus, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex) {
@@ -142,4 +155,3 @@ public class GlobalExceptionHandler {
         return TransactionContext.getCurrentTransactionId().orElse("N/A");
     }
 }
-
