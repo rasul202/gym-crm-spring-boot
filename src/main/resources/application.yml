@@ -26,6 +26,13 @@ spring:
     change-log: classpath:liquibase/changelog-master.yml
     enabled: true
 
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+  jms:
+    pub-sub-domain: false
+
 security:
   password:
     chars: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
@@ -43,33 +50,11 @@ security:
     secret: ${JWT_SECRET_KEY:d3f7a1b4c9e8f2a6b5d0e3f1c4a7b9e2d6f8a3b5c7e1f4a9b2d0e3f6c8a1b4d7}
     expiration-ms: 3600000
 
-eureka:
- client:
-   register-with-eureka: true
-   fetch-registry: true
-   service-url:
-     defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
- instance:
-   prefer-ip-address: true
-
-workload:
- service:
-   name: ${WORKLOAD_SERVICE_NAME:trainer-workload-service}
-
-resilience4j:
- circuit-breaker:
-   instances:
-     workloadServiceCircuitBreaker:
-       sliding-window-type: COUNT_BASED
-       sliding-window-size: 20
-       minimum-number-of-calls: 10
-       permitted-number-of-calls-in-half-open-state: 3
-       wait-duration-in-open-state: 30s
-       failure-rate-threshold: 50
-       automatic-transition-from-open-to-half-open-enabled: true
-       ignore-exceptions:
-         - "feign.FeignException$BadRequest"
-         - "feign.FeignException$FeignClientException"
+app:
+ messaging:
+   queue:
+     trainer-workload: trainer.workload.queue
+     trainer-workload-invalid-dlq: trainer.workload.invalid.dlq
 
 logging:
  level:
