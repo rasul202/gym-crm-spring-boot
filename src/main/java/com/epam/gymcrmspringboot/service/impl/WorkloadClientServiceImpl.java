@@ -59,8 +59,8 @@ public class WorkloadClientServiceImpl implements WorkloadClientService {
                                 ActionType actionType) {
         TrainerWorkloadRequest request = new TrainerWorkloadRequest(
                 trainerUsername,
-                "",
-                null,
+                trainerFirstName,
+                trainerLastName,
                 isActive,
                 trainingDate,
                 trainingDuration,

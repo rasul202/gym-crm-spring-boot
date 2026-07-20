@@ -12,6 +12,7 @@ import com.epam.gymcrmspringboot.service.TraineeService;
 import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.UserService;
 import com.epam.gymcrmspringboot.service.AuthenticationService;
+import com.epam.gymcrmspringboot.service.WorkloadClientService;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ public class TraineeServiceImpl implements TraineeService {
     TraineeMapper traineeMapper;
     UserMapper userMapper;
     TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
+    WorkloadClientService workloadClientService;
 
     @Override
     @Transactional
@@ -274,7 +278,9 @@ public class TraineeServiceImpl implements TraineeService {
 
         authenticationService.assertAuthenticatedUser(username, authentication);
         TraineeEntity trainee = getTraineeByUsernameWithTrainings(username);
+        List<WorkloadDeletePayload> workloadsToDelete = collectWorkloadDeletePayloads(trainee);
         traineeRepository.delete(trainee);
+        notifyWorkloadDeletesAfterCommit(workloadsToDelete, username);
 
         LOGGER.info("Deleted Trainee username={}", username);
     }
@@ -308,6 +314,88 @@ public class TraineeServiceImpl implements TraineeService {
     public List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, Authentication authentication) {
         authenticationService.assertAuthenticatedUser(traineeUsername, authentication);
         return trainerService.getAvailableTrainersForTrainee(traineeUsername, authentication);
+    }
+
+    private List<WorkloadDeletePayload> collectWorkloadDeletePayloads(TraineeEntity trainee) {
+        List<WorkloadDeletePayload> payloads = new ArrayList<>();
+        if (trainee.getTrainings() == null) {
+            return payloads;
+        }
+
+        for (TrainingEntity training : trainee.getTrainings()) {
+            if (training == null || training.getTrainer() == null) {
+                LOGGER.warn("Skipping workload DELETE notification due to missing trainer relation; trainingId={}",
+                        training == null ? null : training.getId());
+                continue;
+            }
+
+            UserEntity trainerUser = training.getTrainer().getUser();
+
+            payloads.add(new WorkloadDeletePayload(
+                    trainerUser != null ? trainerUser.getUsername() : null,
+                    trainerUser != null ? trainerUser.getFirstName() : null,
+                    trainerUser != null ? trainerUser.getLastName() : null,
+                    trainerUser != null ? trainerUser.getIsActive() : null,
+                    training.getTrainingDate(),
+                    training.getTrainingDuration()
+            ));
+        }
+        return payloads;
+    }
+
+    private void notifyWorkloadDeletesAfterCommit(List<WorkloadDeletePayload> workloadsToDelete, String traineeUsername) {
+        if (workloadsToDelete.isEmpty()) {
+            return;
+        }
+
+        Runnable notifier = () -> {
+            int failures = 0;
+            for (WorkloadDeletePayload payload : workloadsToDelete) {
+                try {
+                    workloadClientService.notifyWorkloadDelete(
+                            payload.trainerUsername(),
+                            payload.trainerFirstName(),
+                            payload.trainerLastName(),
+                            Boolean.TRUE.equals(payload.isActive()),
+                            payload.trainingDate(),
+                            payload.trainingDuration()
+                    );
+                } catch (RuntimeException ex) {
+                    failures++;
+                    LOGGER.error("Failed to send workload DELETE notification for traineeUsername={} trainerUsername={} trainingDate={}",
+                            traineeUsername, payload.trainerUsername(), payload.trainingDate(), ex);
+                }
+            }
+
+            if (failures > 0) {
+                LOGGER.warn("Workload DELETE notifications completed with failures for traineeUsername={}: failed={} total={}",
+                        traineeUsername, failures, workloadsToDelete.size());
+            }
+        };
+
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    notifier.run();
+                }
+            });
+            return;
+        }
+
+        LOGGER.warn("Transaction synchronization is inactive; sending workload DELETE notifications immediately for traineeUsername={}",
+                traineeUsername);
+        notifier.run();
+    }
+
+    private record WorkloadDeletePayload(
+            String trainerUsername,
+            String trainerFirstName,
+            String trainerLastName,
+            Boolean isActive,
+            LocalDate trainingDate,
+            Integer trainingDuration
+    ) {
     }
 
 }
