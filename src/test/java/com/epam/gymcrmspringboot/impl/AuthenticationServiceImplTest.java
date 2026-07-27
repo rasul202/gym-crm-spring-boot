@@ -8,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,9 +32,6 @@ class AuthenticationServiceImplTest {
     @Mock
     private JwtUtil jwtUtil;
 
-    @Mock
-    private Environment environment;
-
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
@@ -51,7 +46,6 @@ class AuthenticationServiceImplTest {
         when(authentication.getName()).thenReturn("john.doe");
         when(authentication.getAuthorities()).thenReturn((List) authorities);
         when(jwtUtil.generateToken("john.doe", authorities)).thenReturn("jwt-token");
-        when(environment.acceptsProfiles(any(Profiles.class))).thenReturn(false);
 
         String token = authenticationService.authenticate("john.doe", "pass");
 
@@ -81,5 +75,4 @@ class AuthenticationServiceImplTest {
                 () -> authenticationService.assertAuthenticatedUser("jane.doe", authentication));
     }
 }
-
 

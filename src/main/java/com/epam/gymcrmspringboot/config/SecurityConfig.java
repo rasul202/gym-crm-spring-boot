@@ -1,6 +1,13 @@
 package com.epam.gymcrmspringboot.config;
 
+import com.epam.gymcrmspringboot.handler.RestAccessDeniedHandler;
+import com.epam.gymcrmspringboot.handler.RestAuthenticationEntryPoint;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
+import com.epam.gymcrmspringboot.service.JwtTokenRevocationService;
+import com.epam.gymcrmspringboot.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,22 +18,29 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Collections;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenRevocationService jwtTokenRevocationService;
+    private final RestAccessDeniedHandler restAccessDeniedHandler;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final CorsProperties corsProperties;
+    private final AuthenticationService authenticationService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -37,8 +51,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/trainees", "/trainers", "/authentication/login", "/authentication/logout").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/trainees", "/trainers", "/authentication/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/trainings").hasRole("TRAINER")
                         .requestMatchers(HttpMethod.GET, "/trainings/trainers/**").hasRole("TRAINER")
                         .requestMatchers(HttpMethod.GET, "/trainings/trainees/**").hasRole("TRAINEE")
@@ -47,6 +64,20 @@ public class SecurityConfig {
                         .requestMatchers("/trainees/**").hasRole("TRAINEE")
                         .requestMatchers(HttpMethod.PUT, "/users/password").hasAnyRole("TRAINER", "TRAINEE")
                         .anyRequest().authenticated())
+                .logout(logout -> logout
+                        .logoutUrl("/authentication/logout")
+                        .addLogoutHandler((request, response, authentication) -> {
+                            log.info("Logout request received. Revoking JWT token and clearing security context.");
+                            String authorizationHeader = request.getHeader("Authorization");
+                            String token = authenticationService.extractTokenFromAuthorizationHeader(authorizationHeader);
+                            if (token != null) {
+                                jwtTokenRevocationService.revokeToken(token);
+                            }
+                            SecurityContextHolder.clearContext();
+                        })
+                        .addLogoutHandler(new SecurityContextLogoutHandler())
+                        .logoutSuccessHandler((request, response, authentication) ->
+                                response.setStatus(HttpServletResponse.SC_OK)))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -84,6 +115,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }
-
-

@@ -7,6 +7,7 @@ import com.epam.gymcrmspringboot.dto.response.GetTraineeTrainingsResponse;
 import com.epam.gymcrmspringboot.dto.response.GetTrainerTrainingsResponse;
 import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
+import com.epam.gymcrmspringboot.exception.TrainerWorkloadException;
 import com.epam.gymcrmspringboot.handler.GlobalExceptionHandler;
 import com.epam.gymcrmspringboot.service.TrainingService;
 import tools.jackson.databind.ObjectMapper;
@@ -212,6 +213,8 @@ class TrainingControllerTest {
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.message").value("Invalid credentials"));
         }
+
+
     }
 
     // -------------------------------------------------------------------------

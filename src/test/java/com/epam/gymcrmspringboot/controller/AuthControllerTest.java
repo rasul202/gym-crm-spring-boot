@@ -14,7 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -42,7 +41,6 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(authController, "jwtCookieName", "JWT_TOKEN");
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
@@ -57,8 +55,8 @@ class AuthControllerTest {
     class LoginTests {
 
         @Test
-        @DisplayName("Should return 204 with Set-Cookie header when credentials are valid")
-        void shouldReturn204WhenCredentialsAreValid() throws Exception {
+        @DisplayName("Should return 200 with token in response body when credentials are valid")
+        void shouldReturn200WhenCredentialsAreValid() throws Exception {
             // Arrange
             LoginRequest request = new LoginRequest("John.Doe", "secret123");
             when(authenticationService.authenticate("John.Doe", "secret123")).thenReturn("jwt-token-value");
@@ -67,8 +65,9 @@ class AuthControllerTest {
             mockMvc.perform(post("/authentication/login")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isNoContent())
-                    .andExpect(header().exists("Set-Cookie"));
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                    .andExpect(jsonPath("$.token").value("jwt-token-value"));
 
             verify(authenticationService).authenticate("John.Doe", "secret123");
         }
@@ -130,21 +129,6 @@ class AuthControllerTest {
     }
 
     // -------------------------------------------------------------------------
-    // POST /authentication/logout
+    // POST /authentication/login
     // -------------------------------------------------------------------------
-    @Nested
-    @DisplayName("POST /authentication/logout")
-    class LogoutTests {
-
-        @Test
-        @DisplayName("Should return 204 with cleared cookie header on logout")
-        void shouldReturn204WithClearedCookieOnLogout() throws Exception {
-            // Act & Assert
-            mockMvc.perform(post("/authentication/logout"))
-                    .andExpect(status().isNoContent())
-                    .andExpect(header().exists("Set-Cookie"));
-
-            verifyNoInteractions(authenticationService);
-        }
-    }
 }

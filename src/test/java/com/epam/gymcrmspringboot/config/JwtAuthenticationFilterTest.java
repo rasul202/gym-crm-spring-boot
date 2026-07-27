@@ -1,9 +1,10 @@
 package com.epam.gymcrmspringboot.config;
 
+import com.epam.gymcrmspringboot.service.AuthenticationService;
+import com.epam.gymcrmspringboot.service.JwtTokenRevocationService;
 import com.epam.gymcrmspringboot.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,14 +32,19 @@ class JwtAuthenticationFilterTest {
 	private JwtUtil jwtUtil;
 
 	@Mock
+	private AuthenticationService authenticationService;
+
+	@Mock
+	private JwtTokenRevocationService jwtTokenRevocationService;
+
+	@Mock
 	private FilterChain filterChain;
 
 	private JwtAuthenticationFilter filter;
 
 	@BeforeEach
 	void setUp() {
-		filter = new JwtAuthenticationFilter(jwtUtil);
-		ReflectionTestUtils.setField(filter, "jwtCookieName", "JWT_TOKEN");
+		filter = new JwtAuthenticationFilter(jwtUtil, authenticationService, jwtTokenRevocationService);
 		SecurityContextHolder.clearContext();
 	}
 
@@ -49,15 +54,18 @@ class JwtAuthenticationFilterTest {
 	}
 
 	@Test
-	@DisplayName("Should continue chain without authentication when JWT cookie is absent")
-	void shouldContinueWhenCookieAbsent() throws ServletException, IOException {
+	@DisplayName("Should continue chain without authentication when Authorization header is absent")
+	void shouldContinueWhenAuthorizationHeaderAbsent() throws ServletException, IOException {
 		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/trainees/john");
 		MockHttpServletResponse response = new MockHttpServletResponse();
+
+		when(authenticationService.extractTokenFromAuthorizationHeader(null)).thenReturn(null);
 
 		filter.doFilter(request, response, filterChain);
 
 		assertNull(SecurityContextHolder.getContext().getAuthentication());
 		verifyNoInteractions(jwtUtil);
+		verifyNoInteractions(jwtTokenRevocationService);
 		verify(filterChain).doFilter(any(), any());
 	}
 
@@ -65,9 +73,11 @@ class JwtAuthenticationFilterTest {
 	@DisplayName("Should populate security context when token is valid")
 	void shouldPopulateSecurityContextWhenTokenValid() throws ServletException, IOException {
 		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/trainees/john");
-		request.setCookies(new Cookie("JWT_TOKEN", "valid-token"));
+		request.addHeader("Authorization", "Bearer valid-token");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
+		when(authenticationService.extractTokenFromAuthorizationHeader("Bearer valid-token")).thenReturn("valid-token");
+		when(jwtTokenRevocationService.isTokenRevoked("valid-token")).thenReturn(false);
 		when(jwtUtil.extractUsername("valid-token")).thenReturn("john.doe");
 		when(jwtUtil.extractAuthorities("valid-token"))
 				.thenReturn(List.of(new SimpleGrantedAuthority("ROLE_TRAINEE")));
@@ -88,9 +98,11 @@ class JwtAuthenticationFilterTest {
 		);
 
 		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/trainees/john");
-		request.setCookies(new Cookie("JWT_TOKEN", "bad-token"));
+		request.addHeader("Authorization", "Bearer bad-token");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
+		when(authenticationService.extractTokenFromAuthorizationHeader("Bearer bad-token")).thenReturn("bad-token");
+		when(jwtTokenRevocationService.isTokenRevoked("bad-token")).thenReturn(false);
 		when(jwtUtil.extractUsername("bad-token")).thenThrow(new RuntimeException("invalid token"));
 
 		filter.doFilter(request, response, filterChain);
@@ -99,4 +111,3 @@ class JwtAuthenticationFilterTest {
 		verify(filterChain).doFilter(any(), any());
 	}
 }
-

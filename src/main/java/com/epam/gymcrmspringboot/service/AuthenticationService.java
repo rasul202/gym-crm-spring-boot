@@ -9,4 +9,6 @@ public interface AuthenticationService {
 
     void assertAuthenticatedUser(String username, Authentication authentication);
 
+    String extractTokenFromAuthorizationHeader(String authorizationHeader);
+
 }

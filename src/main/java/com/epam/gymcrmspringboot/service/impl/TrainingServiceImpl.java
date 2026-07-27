@@ -42,6 +42,7 @@ public class TrainingServiceImpl implements TrainingService {
     TrainingTypeService trainingTypeService;
     TrainerService trainerService;
     TraineeService traineeService;
+    WorkloadClientServiceImpl workloadClientServiceImpl;
 
     public TrainingServiceImpl(
             TrainingRepository trainingRepository,
@@ -51,7 +52,8 @@ public class TrainingServiceImpl implements TrainingService {
             RequestValidator requestValidator,
             TrainingTypeService trainingTypeService,
             TrainerService trainerService,
-            @Lazy TraineeService traineeService) {
+            @Lazy TraineeService traineeService,
+            WorkloadClientServiceImpl workloadClientServiceImpl) {
         this.trainingRepository = trainingRepository;
         this.trainingCriteriaRepository = trainingCriteriaRepository;
         this.authenticationService = authenticationService;
@@ -60,6 +62,7 @@ public class TrainingServiceImpl implements TrainingService {
         this.trainingTypeService = trainingTypeService;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
+        this.workloadClientServiceImpl = workloadClientServiceImpl;
     }
 
     @Override
@@ -97,6 +100,39 @@ public class TrainingServiceImpl implements TrainingService {
 
         TrainingEntity saved = trainingRepository.save(training);
         LOGGER.info("Created training id={}", saved.getId());
+
+        workloadClientServiceImpl.notifyWorkloadAdd(
+                trainer.getUser().getUsername(),
+                trainer.getUser().getFirstName(),
+                trainer.getUser().getLastName(),
+                trainer.getUser().getIsActive(),
+                saved.getTrainingDate(),
+                saved.getTrainingDuration()
+        );
+    }
+
+    @Override
+    @Transactional
+    public void deleteTraining(Long trainingId, Authentication authentication) {
+        LOGGER.info("Delete training operation has been started for trainingId={}", trainingId);
+
+        TrainingEntity training = trainingRepository.findById(trainingId)
+                .orElseThrow(() -> new IllegalArgumentException("Training not found with id: " + trainingId));
+
+        TrainerEntity trainer = training.getTrainer();
+        authenticationService.assertAuthenticatedUser(trainer.getUser().getUsername(), authentication);
+
+        trainingRepository.deleteById(trainingId);
+        LOGGER.info("Deleted training id={}", trainingId);
+
+        workloadClientServiceImpl.notifyWorkloadDelete(
+                trainer.getUser().getUsername(),
+                trainer.getUser().getFirstName(),
+                trainer.getUser().getLastName(),
+                trainer.getUser().getIsActive(),
+                training.getTrainingDate(),
+                training.getTrainingDuration()
+        );
     }
 
     @Override

@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: gym-crm-spring-boot
   profiles:
     active: dev
 
@@ -38,12 +40,40 @@ security:
     max-age-seconds: 3600
   jwt:
     cookie-name: JWT_TOKEN
-    secret: ${JWT_SECRET_KEY}
+    secret: ${JWT_SECRET_KEY:d3f7a1b4c9e8f2a6b5d0e3f1c4a7b9e2d6f8a3b5c7e1f4a9b2d0e3f6c8a1b4d7}
     expiration-ms: 3600000
 
+eureka:
+ client:
+   register-with-eureka: true
+   fetch-registry: true
+   service-url:
+     defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+ instance:
+   prefer-ip-address: true
+
+workload:
+ service:
+   name: ${WORKLOAD_SERVICE_NAME:trainer-workload-service}
+
+resilience4j:
+ circuit-breaker:
+   instances:
+     workloadServiceCircuitBreaker:
+       sliding-window-type: COUNT_BASED
+       sliding-window-size: 20
+       minimum-number-of-calls: 10
+       permitted-number-of-calls-in-half-open-state: 3
+       wait-duration-in-open-state: 30s
+       failure-rate-threshold: 50
+       automatic-transition-from-open-to-half-open-enabled: true
+       ignore-exceptions:
+         - "feign.FeignException$BadRequest"
+         - "feign.FeignException$FeignClientException"
+
 logging:
-  level:
-    liquibase: info
+ level:
+   liquibase: info
 
 health:
   inactive-trainer:
@@ -72,7 +102,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5443/gymcrm_local
     username: ${DB_LOCAL_USERNAME:postgres}
-    password: ${DB_LOCAL_PASSWORD}
+    password: ${DB_LOCAL_PASSWORD:localSecretPwd123}
 
 ---
 spring:

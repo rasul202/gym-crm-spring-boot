@@ -19,6 +19,8 @@ public interface TrainingService {
 
     List<GetTrainerTrainingsResponse> getTrainerTrainings(String trainerUsername , Authentication authentication, GetTrainerTrainingsCriteriaRequest criteria);
 
+    void deleteTraining(Long trainingId, Authentication authentication);
+
     //for internal use purpose not for API calls
     void deleteAllByTrainee(TraineeEntity trainee);
 
