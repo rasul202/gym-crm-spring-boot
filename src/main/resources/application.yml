@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: dev
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -28,6 +28,18 @@ security:
   password:
     chars: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
     length: 10
+    bcrypt-strength: 12
+  cors:
+    # is empty as there is no frontend application.
+    allowed-origins: []
+    allowed-methods: [GET, POST, PUT, DELETE, PATCH, OPTIONS]
+    allowed-headers: [Authorization, Content-Type, X-Requested-With]
+    allow-credentials: false
+    max-age-seconds: 3600
+  jwt:
+    cookie-name: JWT_TOKEN
+    secret: ${JWT_SECRET_KEY}
+    expiration-ms: 3600000
 
 logging:
   level:
@@ -60,7 +72,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5443/gymcrm_local
     username: ${DB_LOCAL_USERNAME:postgres}
-    password: ${DB_LOCAL_PASSWORD:localSecretPwd123}
+    password: ${DB_LOCAL_PASSWORD}
 
 ---
 spring:

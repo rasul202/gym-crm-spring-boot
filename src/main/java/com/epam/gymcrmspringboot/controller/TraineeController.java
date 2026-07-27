@@ -17,9 +17,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,11 +58,11 @@ public class TraineeController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainee not found or deactivated")
     })
-    public ResponseEntity<GetTraineeProfileResponse> getTraineeProfile(
-            @PathVariable String username,
-            @RequestHeader("Password") String password) {
-        return ResponseEntity.ok(traineeService.getTraineeByUsername(username, password));
-    }
+     public ResponseEntity<GetTraineeProfileResponse> getTraineeProfile(
+             @PathVariable String username,
+             Authentication authentication) {
+         return ResponseEntity.ok(traineeService.getTraineeByUsername(username, authentication));
+     }
 
     @DeleteMapping("/{username}")
     @ApiOperation(value = "Delete trainee profile", notes = "Removes trainee profile by username")
@@ -72,12 +71,12 @@ public class TraineeController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainee not found or deactivated")
     })
-    public ResponseEntity<Void> deleteTrainee(
-            @PathVariable String username,
-            @RequestHeader("Password") String password) {
-        traineeService.deleteTrainee(username, password);
-        return ResponseEntity.ok().build();
-    }
+     public ResponseEntity<Void> deleteTrainee(
+             @PathVariable String username,
+             Authentication authentication) {
+         traineeService.deleteTrainee(username, authentication);
+         return ResponseEntity.ok().build();
+     }
 
     @PutMapping("/{username}")
     @ApiOperation(value = "Update trainee profile", notes = "Updates trainee profile fields for an authenticated user")
@@ -86,12 +85,12 @@ public class TraineeController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainee not found or deactivated")
     })
-    public ResponseEntity<UpdateTraineeProfileResponse> updateTraineeProfile(
-            @PathVariable String username,
-            @RequestHeader("Password") String password,
-            @RequestBody @Valid UpdateTraineeProfileRequest request) {
-        return ResponseEntity.ok(traineeService.updateTrainee(username, password, request));
-    }
+     public ResponseEntity<UpdateTraineeProfileResponse> updateTraineeProfile(
+             @PathVariable String username,
+             Authentication authentication,
+             @RequestBody @Valid UpdateTraineeProfileRequest request) {
+         return ResponseEntity.ok(traineeService.updateTrainee(username, authentication, request));
+     }
 
     @PatchMapping("/{username}/status")
     @ApiOperation(value = "Activate or deactivate trainee", notes = "Sets trainee status based on isActive parameter, deactivated trainee can not be deactivated and activated trainee can not be activated")
@@ -100,17 +99,17 @@ public class TraineeController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainee not found or deactivated")
     })
-    public ResponseEntity<Void> activateDeactivateTrainee(
-            @PathVariable String username,
-            @RequestHeader("Password") String password,
-            @RequestParam("isActive") @NotNull(message = "isActive must not be null") Boolean isActive) {
-        if (Boolean.TRUE.equals(isActive)) {
-            traineeService.activateTrainee(username, password);
-        } else {
-            traineeService.deactivateTrainee(username, password);
-        }
-        return ResponseEntity.ok().build();
-    }
+     public ResponseEntity<Void> activateDeactivateTrainee(
+             @PathVariable String username,
+             Authentication authentication,
+             @RequestParam("isActive") @NotNull(message = "isActive must not be null") Boolean isActive) {
+         if (Boolean.TRUE.equals(isActive)) {
+             traineeService.activateTrainee(username, authentication);
+         } else {
+             traineeService.deactivateTrainee(username, authentication);
+         }
+         return ResponseEntity.ok().build();
+     }
 
     @PutMapping("/{username}/trainers")
     @ApiOperation(value = "Update trainee trainers", notes = "Delete all existing assignments between specified trainee and trainers then insert updated training assignments between them with default values.")
@@ -119,12 +118,12 @@ public class TraineeController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainee not found or deactivated")
     })
-    public ResponseEntity<List<TrainerSummary>> updateTraineeTrainers(
-            @PathVariable String username,
-            @RequestHeader("Password") String password,
-            @RequestBody @Valid UpdateTraineeTrainersListRequest request) {
-        return ResponseEntity.ok(traineeService.updateTraineeTrainers(username, password, request.getTrainerUsernames()));
-    }
+     public ResponseEntity<List<TrainerSummary>> updateTraineeTrainers(
+             @PathVariable String username,
+             Authentication authentication,
+             @RequestBody @Valid UpdateTraineeTrainersListRequest request) {
+         return ResponseEntity.ok(traineeService.updateTraineeTrainers(username, authentication, request.getTrainerUsernames()));
+     }
 
     @GetMapping("/{traineeUsername}/available-trainers")
     @ApiOperation(value = "Get available trainers", notes = "Returns trainers not currently assigned to the specified trainee")
@@ -133,9 +132,10 @@ public class TraineeController {
             @ApiResponse(code = 401, message = "Authentication failed"),
             @ApiResponse(code = 404, message = "Trainee not found or deactivated")
     })
-    public ResponseEntity<List<TrainerSummary>> getAvailableTrainersForTrainee(
-            @PathVariable String traineeUsername,
-            @RequestHeader("Password") String password) {
-        return ResponseEntity.ok(traineeService.getAvailableTrainersForTrainee(traineeUsername , password));
-    }
+     public ResponseEntity<List<TrainerSummary>> getAvailableTrainersForTrainee(
+             @PathVariable String traineeUsername,
+             Authentication authentication) {
+         return ResponseEntity.ok(traineeService.getAvailableTrainersForTrainee(traineeUsername , authentication));
+     }
+
 }

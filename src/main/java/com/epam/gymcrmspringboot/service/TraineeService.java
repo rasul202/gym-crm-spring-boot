@@ -9,23 +9,24 @@ import com.epam.gymcrmspringboot.dto.response.TrainerSummary;
 import com.epam.gymcrmspringboot.dto.response.UpdateTraineeProfileResponse;
 import com.epam.gymcrmspringboot.model.TraineeEntity;
 
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface TraineeService {
 
     RegistrationResponse registerTrainee(CreateTraineeRequest request);
 
-    GetTraineeProfileResponse getTraineeByUsername(String username, String password);
+    GetTraineeProfileResponse getTraineeByUsername(String username, Authentication authentication);
 
-    UpdateTraineeProfileResponse updateTrainee(String username, String password, UpdateTraineeProfileRequest request);
+    UpdateTraineeProfileResponse updateTrainee(String username, Authentication authentication, UpdateTraineeProfileRequest request);
 
-    List<TrainerSummary> updateTraineeTrainers(String username, String password, List<String> trainerUsernames);
+    List<TrainerSummary> updateTraineeTrainers(String username, Authentication authentication, List<String> trainerUsernames);
 
-    void deactivateTrainee(String username, String password);
+    void deactivateTrainee(String username, Authentication authentication);
 
-    void activateTrainee(String username, String password);
+    void activateTrainee(String username, Authentication authentication);
 
-    void deleteTrainee(String username, String password);
+    void deleteTrainee(String username, Authentication authentication);
 
     boolean isRegisteredAsTrainee(String firstName, String lastName);
 
@@ -33,6 +34,6 @@ public interface TraineeService {
 
     TraineeEntity getTraineeByUsernameWithTrainings(String username);
 
-    List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, String password);
+    List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, Authentication authentication);
 
 }

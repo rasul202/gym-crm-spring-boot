@@ -1,9 +1,7 @@
 package com.epam.gymcrmspringboot.controller;
 
-
-import com.epam.gymcrmspringboot.dto.request.ChangePasswordRequest;
 import com.epam.gymcrmspringboot.dto.request.LoginRequest;
-import com.epam.gymcrmspringboot.service.UserService;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -11,56 +9,61 @@ import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
 @RequiredArgsConstructor
-@Api(tags = "Authentication")
+@Api(tags = "authentication")
+@RequestMapping("/authentication")
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
 
-    UserService userService;
+    AuthenticationService authenticationService;
+    @NonFinal
+    @Value("${security.jwt.cookie-name:JWT_TOKEN}")
+    String jwtCookieName;
 
-    @GetMapping("/login")
-    @ApiOperation(value = "Authenticate user", notes = "Validates user credentials and checks user is active")
+    @PostMapping("/login")
+    @ApiOperation(value = "Authenticate user", notes = "Validates user credentials and sets JWT in secure HttpOnly cookie")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Authentication successful"),
+            @ApiResponse(code = 204, message = "Authentication successful"),
             @ApiResponse(code = 401, message = "Invalid credentials")
     })
-    public ResponseEntity<Void> login(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password) {
-        boolean authenticated = userService.authenticateActiveUser(
-                LoginRequest.builder().username(username).password(password).build() );
-        return authenticated ? ResponseEntity.ok().build() : ResponseEntity.status(401).build();
+    public ResponseEntity<Void> login(@RequestBody @Valid LoginRequest request) {
+        String token = authenticationService.authenticate(request.getUsername(), request.getPassword());
+        ResponseCookie jwtCookie = ResponseCookie.from(jwtCookieName, token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .build();
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .build();
     }
 
-    @PutMapping("/password")
-    @ApiOperation(value = "Change user password", notes = "Changes password for an authenticated active user")
+    @PostMapping("/logout")
+    @ApiOperation(value = "Logout user", notes = "Deletes JWT secure HttpOnly cookie")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Password changed successfully"),
-            @ApiResponse(code = 400, message = "Validation failed for request body"),
-            @ApiResponse(code = 401, message = "Invalid current credentials")
+            @ApiResponse(code = 204, message = "Logout successful")
     })
-    public ResponseEntity<Void> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
-        boolean authenticated = userService.authenticateActiveUser(
-                LoginRequest.builder()
-                        .username(request.getUsername())
-                        .password(request.getOldPassword())
-                        .build());
-        if (!authenticated) {
-            return ResponseEntity.status(401).build();
-        }
-        userService.changePassword(request.getUsername(), request.getNewPassword());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> logout() {
+        ResponseCookie clearJwtCookie = ResponseCookie.from(jwtCookieName, "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(0)
+                .build();
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, clearJwtCookie.toString())
+                .build();
     }
-}
 
+}

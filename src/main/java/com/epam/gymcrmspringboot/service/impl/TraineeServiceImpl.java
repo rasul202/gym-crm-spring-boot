@@ -1,10 +1,8 @@
 package com.epam.gymcrmspringboot.service.impl;
 
 import com.epam.gymcrmspringboot.dto.request.CreateTraineeRequest;
-import com.epam.gymcrmspringboot.dto.request.LoginRequest;
 import com.epam.gymcrmspringboot.dto.request.UpdateTraineeProfileRequest;
 import com.epam.gymcrmspringboot.dto.response.*;
-import com.epam.gymcrmspringboot.exception.AuthenticationException;
 import com.epam.gymcrmspringboot.exception.EntityNotFoundException;
 import com.epam.gymcrmspringboot.mapper.TraineeMapper;
 import com.epam.gymcrmspringboot.mapper.UserMapper;
@@ -12,14 +10,15 @@ import com.epam.gymcrmspringboot.model.*;
 import com.epam.gymcrmspringboot.repository.TraineeRepository;
 import com.epam.gymcrmspringboot.service.TraineeService;
 import com.epam.gymcrmspringboot.service.TrainerService;
-import com.epam.gymcrmspringboot.service.TrainingService;
 import com.epam.gymcrmspringboot.service.UserService;
+import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,22 +43,11 @@ public class TraineeServiceImpl implements TraineeService {
     TraineeRepository traineeRepository;
     TrainerService trainerService;
     UserService userService;
+    AuthenticationService authenticationService;
     RequestValidator requestValidator;
     TraineeMapper traineeMapper;
     UserMapper userMapper;
     TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
-
-    private void authenticateActiveUser(String username, String password) {
-        if (!userService.authenticateActiveUser(LoginRequest.builder().username(username).password(password).build())) {
-            throw new AuthenticationException("Invalid username or password for trainee user profile: " + username);
-        }
-    }
-
-    private void authenticateAnyUser(String username, String password) {
-        if (!userService.authenticateAnyUser(LoginRequest.builder().username(username).password(password).build())) {
-            throw new AuthenticationException("Invalid username or password for trainee user profile: " + username);
-        }
-    }
 
     @Override
     @Transactional
@@ -88,13 +76,13 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional(readOnly = true)
-    public GetTraineeProfileResponse getTraineeByUsername(String username, String password) {
+    public GetTraineeProfileResponse getTraineeByUsername(String username, Authentication authentication) {
         LOGGER.info("Get trainee profile operation has been started for username={}", username);
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("username must not be null or blank");
         }
 
-        authenticateActiveUser(username, password);
+        authenticationService.assertAuthenticatedUser(username, authentication);
         TraineeEntity trainee = getTraineeByUsername(username);
 
         LOGGER.debug("Fetched Trainee profile username={}", username);
@@ -105,11 +93,11 @@ public class TraineeServiceImpl implements TraineeService {
     @Transactional
     public UpdateTraineeProfileResponse updateTrainee(
             String username,
-            String password,
+            Authentication authentication,
             UpdateTraineeProfileRequest request) {
         LOGGER.info("Update trainee operation has been started for username={}", username);
         requestValidator.validate(request);
-        authenticateActiveUser(username, password);
+        authenticationService.assertAuthenticatedUser(username, authentication);
 
         boolean hasFirstName = request.getFirstName() != null && !request.getFirstName().isBlank();
         boolean hasLastName = request.getLastName() != null && !request.getLastName().isBlank();
@@ -152,7 +140,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional
-    public List<TrainerSummary> updateTraineeTrainers(String username, String password, List<String> trainerUsernames) {
+    public List<TrainerSummary> updateTraineeTrainers(String username, Authentication authentication, List<String> trainerUsernames) {
         LOGGER.info("Update trainee trainers operation has been started for username={} trainerCount={}",
                 username,
                 trainerUsernames == null ? null : trainerUsernames.size());
@@ -160,8 +148,7 @@ public class TraineeServiceImpl implements TraineeService {
             throw new IllegalArgumentException("trainerUsernames must contain at least one value");
         }
 
-        authenticateActiveUser(username, password);
-
+        authenticationService.assertAuthenticatedUser(username, authentication);
         List<String> normalizedUsernames = trainerUsernames.stream()
                 .map(trainerUsername -> trainerUsername == null ? null : trainerUsername.trim())
                 .filter(trainerUsername -> trainerUsername != null && !trainerUsername.isBlank())
@@ -253,11 +240,11 @@ public class TraineeServiceImpl implements TraineeService {
                 .toList();
     }
 
-    @Override
-    @Transactional
-    public void deactivateTrainee(String username, String password) {
-        LOGGER.info("Deactivate trainee operation has been started for username={}", username);
-        authenticateAnyUser(username, password);
+     @Override
+     @Transactional
+     public void deactivateTrainee(String username, Authentication authentication) {
+         LOGGER.info("Deactivate trainee operation has been started for username={}", username);
+         authenticationService.assertAuthenticatedUser(username, authentication);
         if (userService.deactivateUserProfile(username)) {
             LOGGER.info("Deactivated Trainee username={}", username);
         } else {
@@ -265,11 +252,11 @@ public class TraineeServiceImpl implements TraineeService {
         }
     }
 
-    @Override
-    @Transactional
-    public void activateTrainee(String username, String password) {
-        LOGGER.info("Activate trainee operation has been started for username={}", username);
-        authenticateAnyUser(username, password);
+     @Override
+     @Transactional
+     public void activateTrainee(String username, Authentication authentication) {
+         LOGGER.info("Activate trainee operation has been started for username={}", username);
+         authenticationService.assertAuthenticatedUser(username, authentication);
         if (userService.activateUserProfile(username)){
             LOGGER.info("Activated Trainee username={}", username);
         }else {
@@ -279,14 +266,13 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     @Transactional
-    public void deleteTrainee(String username, String password) {
+    public void deleteTrainee(String username, Authentication authentication) {
         LOGGER.info("Delete trainee operation has been started for username={}", username);
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("username must not be blank");
         }
 
-        authenticateActiveUser(username, password);
-
+        authenticationService.assertAuthenticatedUser(username, authentication);
         TraineeEntity trainee = getTraineeByUsernameWithTrainings(username);
         traineeRepository.delete(trainee);
 
@@ -319,8 +305,9 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, String password) {
-        return trainerService.getAvailableTrainersForTrainee(traineeUsername, password);
+    public List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, Authentication authentication) {
+        authenticationService.assertAuthenticatedUser(traineeUsername, authentication);
+        return trainerService.getAvailableTrainersForTrainee(traineeUsername, authentication);
     }
 
 }

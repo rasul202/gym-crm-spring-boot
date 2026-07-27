@@ -165,11 +165,10 @@ class TrainerControllerTest {
             GetTrainerProfileResponse profile = new GetTrainerProfileResponse(
                     "Jane", "Smith", "Yoga", true,
                     List.of(new TraineeSummary("trainee.one", "Trainee", "One")));
-            when(trainerService.getTrainerByUsername("Jane.Smith", "secret")).thenReturn(profile);
+            when(trainerService.getTrainerByUsername(eq("Jane.Smith"), any())).thenReturn(profile);
 
             // Act & Assert
-            mockMvc.perform(get("/trainers/Jane.Smith")
-                            .header("Password", "secret"))
+            mockMvc.perform(get("/trainers/Jane.Smith"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.firstName").value("Jane"))
                     .andExpect(jsonPath("$.lastName").value("Smith"))
@@ -177,42 +176,33 @@ class TrainerControllerTest {
                     .andExpect(jsonPath("$.isActive").value(true))
                     .andExpect(jsonPath("$.trainees[0].username").value("trainee.one"));
 
-            verify(trainerService).getTrainerByUsername("Jane.Smith", "secret");
+            verify(trainerService).getTrainerByUsername(eq("Jane.Smith"), any());
         }
 
         @Test
         @DisplayName("Should return 404 when trainer is not found")
         void shouldReturn404WhenTrainerIsNotFound() throws Exception {
             // Arrange
-            when(trainerService.getTrainerByUsername("Unknown", "pass"))
+            when(trainerService.getTrainerByUsername(eq("Unknown"), any()))
                     .thenThrow(new EntityNotFoundException("Trainer not found"));
 
             // Act & Assert
-            mockMvc.perform(get("/trainers/Unknown")
-                            .header("Password", "pass"))
+            mockMvc.perform(get("/trainers/Unknown"))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("Trainer not found"));
         }
 
         @Test
-        @DisplayName("Should return 401 when password is wrong")
-        void shouldReturn401WhenPasswordIsWrong() throws Exception {
+        @DisplayName("Should return 401 when service throws AuthenticationException")
+        void shouldReturn401WhenAuthenticationFails() throws Exception {
             // Arrange
-            when(trainerService.getTrainerByUsername("Jane.Smith", "wrong"))
+            when(trainerService.getTrainerByUsername(eq("Jane.Smith"), any()))
                     .thenThrow(new AuthenticationException("Invalid credentials"));
 
             // Act & Assert
-            mockMvc.perform(get("/trainers/Jane.Smith")
-                            .header("Password", "wrong"))
+            mockMvc.perform(get("/trainers/Jane.Smith"))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.message").value("Invalid credentials"));
-        }
-
-        @Test
-        @DisplayName("Should return 400 when Password header is missing")
-        void shouldReturn400WhenPasswordHeaderIsMissing() throws Exception {
-            mockMvc.perform(get("/trainers/Jane.Smith"))
-                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -231,12 +221,11 @@ class TrainerControllerTest {
                     new UpdateTrainerProfileRequest("Jane", "Smith", "Pilates", true);
             UpdateTrainerProfileResponse response = new UpdateTrainerProfileResponse(
                     "Jane.Smith", "Jane", "Smith", "Pilates", true, List.of());
-            when(trainerService.updateTrainer(eq("Jane.Smith"), eq("secret"), any()))
+            when(trainerService.updateTrainer(eq("Jane.Smith"), any(), any()))
                     .thenReturn(response);
 
             // Act & Assert
             mockMvc.perform(put("/trainers/Jane.Smith")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -245,7 +234,7 @@ class TrainerControllerTest {
                     .andExpect(jsonPath("$.specialization").value("Pilates"))
                     .andExpect(jsonPath("$.isActive").value(true));
 
-            verify(trainerService).updateTrainer(eq("Jane.Smith"), eq("secret"), any());
+            verify(trainerService).updateTrainer(eq("Jane.Smith"), any(), any());
         }
 
         @Test
@@ -257,7 +246,6 @@ class TrainerControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainers/Jane.Smith")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -273,7 +261,6 @@ class TrainerControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainers/Jane.Smith")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -289,11 +276,40 @@ class TrainerControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainers/Jane.Smith")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.fieldErrors.isActive").exists());
+        }
+
+        @Test
+        @DisplayName("Should return 401 when update authentication fails")
+        void shouldReturn401WhenUpdateAuthenticationFails() throws Exception {
+            UpdateTrainerProfileRequest request =
+                    new UpdateTrainerProfileRequest("Jane", "Smith", "Yoga", true);
+            when(trainerService.updateTrainer(eq("Jane.Smith"), any(), any()))
+                    .thenThrow(new AuthenticationException("Invalid credentials"));
+
+            mockMvc.perform(put("/trainers/Jane.Smith")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.message").value("Invalid credentials"));
+        }
+
+        @Test
+        @DisplayName("Should return 404 when update target trainer is missing")
+        void shouldReturn404WhenUpdateTargetMissing() throws Exception {
+            UpdateTrainerProfileRequest request =
+                    new UpdateTrainerProfileRequest("Jane", "Smith", "Yoga", true);
+            when(trainerService.updateTrainer(eq("Jane.Smith"), any(), any()))
+                    .thenThrow(new EntityNotFoundException("Trainer not found"));
+
+            mockMvc.perform(put("/trainers/Jane.Smith")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Trainer not found"));
         }
     }
 
@@ -308,15 +324,14 @@ class TrainerControllerTest {
         @DisplayName("Should return 200 when trainer is activated successfully")
         void shouldReturn200WhenTrainerIsActivated() throws Exception {
             // Arrange
-            doNothing().when(trainerService).activateTrainer("Jane.Smith", "secret");
+            doNothing().when(trainerService).activateTrainer(eq("Jane.Smith"), any());
 
             // Act & Assert
             mockMvc.perform(patch("/trainers/Jane.Smith/status")
-                            .header("Password", "secret")
                             .param("isActive", "true"))
                     .andExpect(status().isOk());
 
-            verify(trainerService).activateTrainer("Jane.Smith", "secret");
+            verify(trainerService).activateTrainer(eq("Jane.Smith"), any());
             verify(trainerService, never()).deactivateTrainer(any(), any());
         }
 
@@ -324,31 +339,21 @@ class TrainerControllerTest {
         @DisplayName("Should return 200 when trainer is deactivated successfully")
         void shouldReturn200WhenTrainerIsDeactivated() throws Exception {
             // Arrange
-            doNothing().when(trainerService).deactivateTrainer("Jane.Smith", "secret");
+            doNothing().when(trainerService).deactivateTrainer(eq("Jane.Smith"), any());
 
             // Act & Assert
             mockMvc.perform(patch("/trainers/Jane.Smith/status")
-                            .header("Password", "secret")
                             .param("isActive", "false"))
                     .andExpect(status().isOk());
 
-            verify(trainerService).deactivateTrainer("Jane.Smith", "secret");
+            verify(trainerService).deactivateTrainer(eq("Jane.Smith"), any());
             verify(trainerService, never()).activateTrainer(any(), any());
         }
 
         @Test
         @DisplayName("Should return 400 when isActive param is missing")
         void shouldReturn400WhenIsActiveParamIsMissing() throws Exception {
-            mockMvc.perform(patch("/trainers/Jane.Smith/status")
-                            .header("Password", "secret"))
-                    .andExpect(status().isBadRequest());
-        }
-
-        @Test
-        @DisplayName("Should return 400 when Password header is missing")
-        void shouldReturn400WhenPasswordHeaderIsMissing() throws Exception {
-            mockMvc.perform(patch("/trainers/Jane.Smith/status")
-                            .param("isActive", "true"))
+            mockMvc.perform(patch("/trainers/Jane.Smith/status"))
                     .andExpect(status().isBadRequest());
         }
 
@@ -357,15 +362,13 @@ class TrainerControllerTest {
         void shouldReturn401WhenAuthenticationFails() throws Exception {
             // Arrange
             doThrow(new AuthenticationException("Invalid credentials"))
-                    .when(trainerService).activateTrainer("Jane.Smith", "bad");
+                    .when(trainerService).activateTrainer(eq("Jane.Smith"), any());
 
             // Act & Assert
             mockMvc.perform(patch("/trainers/Jane.Smith/status")
-                            .header("Password", "bad")
                             .param("isActive", "true"))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.message").value("Invalid credentials"));
         }
     }
 }
-

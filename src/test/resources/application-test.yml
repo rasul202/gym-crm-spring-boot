@@ -28,4 +28,7 @@ security:
   password:
     chars: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
     length: 10
+  jwt:
+    secret: R0lNU1BST0pFQ1RfSldUX1NFQ1JFVF9LRVlfRk9SX0hTMjU2XzIwMjY=
+    expiration-ms: 3600000
 

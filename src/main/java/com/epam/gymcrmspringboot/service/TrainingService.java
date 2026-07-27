@@ -8,15 +8,16 @@ import com.epam.gymcrmspringboot.dto.response.GetTrainerTrainingsResponse;
 import com.epam.gymcrmspringboot.model.TraineeEntity;
 import com.epam.gymcrmspringboot.model.TrainingEntity;
 
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface TrainingService {
 
-    void addTraining(AddTrainingRequest request, String trainerPassword);
+    void addTraining(AddTrainingRequest request, Authentication authentication);
 
-    List<GetTraineeTrainingsResponse> getTraineeTrainings(String traineeUsername , String password, GetTraineeTrainingsCriteriaRequest request);
+    List<GetTraineeTrainingsResponse> getTraineeTrainings(String traineeUsername , Authentication authentication, GetTraineeTrainingsCriteriaRequest request);
 
-    List<GetTrainerTrainingsResponse> getTrainerTrainings(String trainerUsername , String password, GetTrainerTrainingsCriteriaRequest criteria);
+    List<GetTrainerTrainingsResponse> getTrainerTrainings(String trainerUsername , Authentication authentication, GetTrainerTrainingsCriteriaRequest criteria);
 
     //for internal use purpose not for API calls
     void deleteAllByTrainee(TraineeEntity trainee);

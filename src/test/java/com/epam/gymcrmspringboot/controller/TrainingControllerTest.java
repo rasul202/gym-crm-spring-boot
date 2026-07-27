@@ -72,16 +72,15 @@ class TrainingControllerTest {
             AddTrainingRequest request = new AddTrainingRequest(
                     "john.doe", "jane.smith", "Morning Yoga",
                     LocalDate.of(2026, 7, 1), 60);
-            doNothing().when(trainingService).addTraining(any(AddTrainingRequest.class), eq("trainerPass"));
+            doNothing().when(trainingService).addTraining(any(AddTrainingRequest.class), any());
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
-            verify(trainingService).addTraining(any(AddTrainingRequest.class), eq("trainerPass"));
+            verify(trainingService).addTraining(any(AddTrainingRequest.class), any());
         }
 
         @Test
@@ -94,7 +93,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -113,7 +111,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -130,7 +127,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -146,7 +142,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -163,7 +158,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -180,26 +174,10 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.fieldErrors.trainingDuration").exists());
-        }
-
-        @Test
-        @DisplayName("Should return 400 when Password header is missing")
-        void shouldReturn400WhenPasswordHeaderIsMissing() throws Exception {
-            // Arrange
-            AddTrainingRequest request = new AddTrainingRequest(
-                    "john.doe", "jane.smith", "Morning Yoga",
-                    LocalDate.of(2026, 7, 1), 60);
-
-            // Act & Assert
-            mockMvc.perform(post("/trainings")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -210,15 +188,29 @@ class TrainingControllerTest {
                     "unknown.trainee", "unknown.trainer", "Session",
                     LocalDate.of(2026, 7, 1), 45);
             doThrow(new EntityNotFoundException("Trainee not found"))
-                    .when(trainingService).addTraining(any(), eq("trainerPass"));
+                    .when(trainingService).addTraining(any(), any());
 
             // Act & Assert
             mockMvc.perform(post("/trainings")
-                            .header("Password", "trainerPass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("Trainee not found"));
+        }
+
+        @Test
+        @DisplayName("Should return 401 when authentication fails for add training")
+        void shouldReturn401WhenAddTrainingAuthenticationFails() throws Exception {
+            AddTrainingRequest request = new AddTrainingRequest(
+                    "john.doe", "jane.smith", "Session", LocalDate.of(2026, 7, 1), 45);
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(trainingService).addTraining(any(), any());
+
+            mockMvc.perform(post("/trainings")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.message").value("Invalid credentials"));
         }
     }
 
@@ -242,12 +234,11 @@ class TrainingControllerTest {
                     new GetTraineeTrainingsResponse(
                             "Evening Run", LocalDate.of(2026, 7, 3), "Cardio", 45,
                             "trainer.two", "john.doe"));
-            when(trainingService.getTraineeTrainings(eq("john.doe"), eq("pass"), any()))
+            when(trainingService.getTraineeTrainings(eq("john.doe"), any(), any()))
                     .thenReturn(trainings);
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainees/john.doe")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isOk())
@@ -256,7 +247,7 @@ class TrainingControllerTest {
                     .andExpect(jsonPath("$[0].trainingType").value("Yoga"))
                     .andExpect(jsonPath("$[1].trainingName").value("Evening Run"));
 
-            verify(trainingService).getTraineeTrainings(eq("john.doe"), eq("pass"), any());
+            verify(trainingService).getTraineeTrainings(eq("john.doe"), any(), any());
         }
 
         @Test
@@ -265,12 +256,11 @@ class TrainingControllerTest {
             // Arrange
             GetTraineeTrainingsCriteriaRequest criteria =
                     new GetTraineeTrainingsCriteriaRequest(null, null, null, null);
-            when(trainingService.getTraineeTrainings(eq("john.doe"), eq("pass"), any()))
+            when(trainingService.getTraineeTrainings(eq("john.doe"), any(), any()))
                     .thenReturn(List.of());
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainees/john.doe")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isOk())
@@ -287,12 +277,11 @@ class TrainingControllerTest {
                     new GetTraineeTrainingsResponse(
                             "Yoga Session", LocalDate.of(2026, 6, 15), "Yoga", 60,
                             "trainer.one", "john.doe"));
-            when(trainingService.getTraineeTrainings(eq("john.doe"), eq("pass"), any()))
+            when(trainingService.getTraineeTrainings(eq("john.doe"), any(), any()))
                     .thenReturn(trainings);
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainees/john.doe")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isOk())
@@ -309,7 +298,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainees/john.doe")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isBadRequest());
@@ -321,12 +309,11 @@ class TrainingControllerTest {
             // Arrange
             GetTraineeTrainingsCriteriaRequest criteria =
                     new GetTraineeTrainingsCriteriaRequest(null, null, null, null);
-            when(trainingService.getTraineeTrainings(eq("john.doe"), eq("bad"), any()))
+            when(trainingService.getTraineeTrainings(eq("john.doe"), any(), any()))
                     .thenThrow(new AuthenticationException("Invalid credentials"));
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainees/john.doe")
-                            .header("Password", "bad")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isUnauthorized());
@@ -353,12 +340,11 @@ class TrainingControllerTest {
                     new GetTrainerTrainingsResponse(
                             "Advanced Pilates", LocalDate.of(2026, 7, 5), "Pilates", 90,
                             "jane.smith", "alice.jones"));
-            when(trainingService.getTrainerTrainings(eq("jane.smith"), eq("pass"), any()))
+            when(trainingService.getTrainerTrainings(eq("jane.smith"), any(), any()))
                     .thenReturn(trainings);
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainers/jane.smith")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isOk())
@@ -366,7 +352,7 @@ class TrainingControllerTest {
                     .andExpect(jsonPath("$[0].trainingName").value("Morning Yoga"))
                     .andExpect(jsonPath("$[1].trainingName").value("Advanced Pilates"));
 
-            verify(trainingService).getTrainerTrainings(eq("jane.smith"), eq("pass"), any());
+            verify(trainingService).getTrainerTrainings(eq("jane.smith"), any(), any());
         }
 
         @Test
@@ -375,12 +361,11 @@ class TrainingControllerTest {
             // Arrange
             GetTrainerTrainingsCriteriaRequest criteria =
                     new GetTrainerTrainingsCriteriaRequest(null, null, null);
-            when(trainingService.getTrainerTrainings(eq("jane.smith"), eq("pass"), any()))
+            when(trainingService.getTrainerTrainings(eq("jane.smith"), any(), any()))
                     .thenReturn(List.of());
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainers/jane.smith")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isOk())
@@ -396,7 +381,6 @@ class TrainingControllerTest {
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainers/jane.smith")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isBadRequest());
@@ -408,31 +392,15 @@ class TrainingControllerTest {
             // Arrange
             GetTrainerTrainingsCriteriaRequest criteria =
                     new GetTrainerTrainingsCriteriaRequest(null, null, null);
-            when(trainingService.getTrainerTrainings(eq("unknown.trainer"), eq("pass"), any()))
+            when(trainingService.getTrainerTrainings(eq("unknown.trainer"), any(), any()))
                     .thenThrow(new EntityNotFoundException("Trainer not found"));
 
             // Act & Assert
             mockMvc.perform(get("/trainings/trainers/unknown.trainer")
-                            .header("Password", "pass")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(criteria)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("Trainer not found"));
         }
-
-        @Test
-        @DisplayName("Should return 400 when Password header is missing")
-        void shouldReturn400WhenPasswordHeaderIsMissing() throws Exception {
-            // Arrange
-            GetTrainerTrainingsCriteriaRequest criteria =
-                    new GetTrainerTrainingsCriteriaRequest(null, null, null);
-
-            // Act & Assert
-            mockMvc.perform(get("/trainings/trainers/jane.smith")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(criteria)))
-                    .andExpect(status().isBadRequest());
-        }
     }
 }
-

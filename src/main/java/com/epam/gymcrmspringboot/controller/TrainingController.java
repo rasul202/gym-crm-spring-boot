@@ -13,13 +13,12 @@ import io.swagger.annotations.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,12 +39,12 @@ public class TrainingController {
             @ApiResponse(code = 200, message = "Training added successfully"),
             @ApiResponse(code = 401, message = "Authentication failed for trainer")
     })
-    public ResponseEntity<Void> addTraining(
-            @RequestBody @Valid AddTrainingRequest request,
-            @RequestHeader("Password") String trainerPassword) {
-        trainingService.addTraining(request, trainerPassword);
-        return ResponseEntity.ok().build();
-    }
+     public ResponseEntity<Void> addTraining(
+             @RequestBody @Valid AddTrainingRequest request,
+             Authentication authentication) {
+         trainingService.addTraining(request, authentication);
+         return ResponseEntity.ok().build();
+     }
 
     @GetMapping("/trainees/{username}")
     @ApiOperation(value = "Get trainee trainings", notes = "Returns trainee trainings that match provided criteria")
@@ -53,12 +52,12 @@ public class TrainingController {
             @ApiResponse(code = 200, message = "Trainings returned successfully"),
             @ApiResponse(code = 401, message = "Trainee authentication failed")
     })
-    public ResponseEntity<List<GetTraineeTrainingsResponse>> getTraineeTrainings(
-            @PathVariable String username,
-            @RequestHeader("Password") String password,
-            @RequestBody @Valid GetTraineeTrainingsCriteriaRequest criteria) {
-        return ResponseEntity.ok(trainingService.getTraineeTrainings(username , password , criteria ));
-    }
+     public ResponseEntity<List<GetTraineeTrainingsResponse>> getTraineeTrainings(
+             @PathVariable String username,
+             Authentication authentication,
+             @RequestBody @Valid GetTraineeTrainingsCriteriaRequest criteria) {
+         return ResponseEntity.ok(trainingService.getTraineeTrainings(username, authentication, criteria));
+     }
 
     @GetMapping("/trainers/{username}")
     @ApiOperation(value = "Get trainer trainings", notes = "Returns trainer trainings that match provided criteria")
@@ -68,8 +67,8 @@ public class TrainingController {
     })
     public ResponseEntity<List<GetTrainerTrainingsResponse>> getTrainerTrainings(
             @PathVariable() String username,
-            @RequestHeader("Password") String password,
+            Authentication authentication,
             @RequestBody @Valid GetTrainerTrainingsCriteriaRequest request) {
-        return ResponseEntity.ok(trainingService.getTrainerTrainings(username , password , request));
+         return ResponseEntity.ok(trainingService.getTrainerTrainings(username, authentication, request));
     }
 }

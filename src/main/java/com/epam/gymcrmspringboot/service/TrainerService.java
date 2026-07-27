@@ -9,22 +9,23 @@ import com.epam.gymcrmspringboot.dto.response.TrainerSummary;
 import com.epam.gymcrmspringboot.dto.response.UpdateTrainerProfileResponse;
 import com.epam.gymcrmspringboot.model.TrainerEntity;
 
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface TrainerService {
 
     RegistrationResponse registerTrainer(CreateTrainerRequest request);
 
-    UpdateTrainerProfileResponse updateTrainer(String username, String password, UpdateTrainerProfileRequest request);
+    UpdateTrainerProfileResponse updateTrainer(String username, Authentication authentication, UpdateTrainerProfileRequest request);
 
-    GetTrainerProfileResponse getTrainerByUsername(String username, String password);
+    GetTrainerProfileResponse getTrainerByUsername(String username, Authentication authentication);
 
-    void deactivateTrainer(String username, String password);
+    void deactivateTrainer(String username, Authentication authentication);
 
-    void activateTrainer(String username, String password);
+    void activateTrainer(String username, Authentication authentication);
 
     //Get trainers list that not assigned on trainee by trainee's username.
-    List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, String password);
+    List<TrainerSummary> getAvailableTrainersForTrainee(String traineeUsername, Authentication authentication);
 
     List<TrainerEntity> getAllTrainersUsernamesIn(List<String> usernames);
 

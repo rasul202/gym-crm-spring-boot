@@ -180,53 +180,43 @@ class TraineeControllerTest {
             GetTraineeProfileResponse profile = new GetTraineeProfileResponse(
                     "John", "Doe", LocalDate.of(1990, 5, 20), "123 Main St", true,
                     List.of(new TrainerSummary("trainer.one", "Trainer", "One", "Yoga")));
-            when(traineeService.getTraineeByUsername("John.Doe", "secret")).thenReturn(profile);
+            when(traineeService.getTraineeByUsername(eq("John.Doe"), any())).thenReturn(profile);
 
             // Act & Assert
-            mockMvc.perform(get("/trainees/John.Doe")
-                            .header("Password", "secret"))
+            mockMvc.perform(get("/trainees/John.Doe"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.firstName").value("John"))
                     .andExpect(jsonPath("$.lastName").value("Doe"))
                     .andExpect(jsonPath("$.isActive").value(true))
                     .andExpect(jsonPath("$.trainers[0].username").value("trainer.one"));
 
-            verify(traineeService).getTraineeByUsername("John.Doe", "secret");
+            verify(traineeService).getTraineeByUsername(eq("John.Doe"), any());
         }
 
         @Test
         @DisplayName("Should return 404 when trainee is not found")
         void shouldReturn404WhenTraineeIsNotFound() throws Exception {
             // Arrange
-            when(traineeService.getTraineeByUsername("Unknown", "pass"))
+            when(traineeService.getTraineeByUsername(eq("Unknown"), any()))
                     .thenThrow(new EntityNotFoundException("Trainee not found"));
 
             // Act & Assert
-            mockMvc.perform(get("/trainees/Unknown")
-                            .header("Password", "pass"))
+            mockMvc.perform(get("/trainees/Unknown"))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("Trainee not found"));
         }
 
         @Test
-        @DisplayName("Should return 401 when password is wrong")
-        void shouldReturn401WhenPasswordIsWrong() throws Exception {
+        @DisplayName("Should return 401 when service throws AuthenticationException")
+        void shouldReturn401WhenAuthenticationFails() throws Exception {
             // Arrange
-            when(traineeService.getTraineeByUsername("John.Doe", "wrongPass"))
+            when(traineeService.getTraineeByUsername(eq("John.Doe"), any()))
                     .thenThrow(new AuthenticationException("Invalid credentials"));
 
             // Act & Assert
-            mockMvc.perform(get("/trainees/John.Doe")
-                            .header("Password", "wrongPass"))
+            mockMvc.perform(get("/trainees/John.Doe"))
                     .andExpect(status().isUnauthorized())
                     .andExpect(jsonPath("$.message").value("Invalid credentials"));
-        }
-
-        @Test
-        @DisplayName("Should return 400 when Password header is missing")
-        void shouldReturn400WhenPasswordHeaderIsMissing() throws Exception {
-            mockMvc.perform(get("/trainees/John.Doe"))
-                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -245,11 +235,10 @@ class TraineeControllerTest {
                     "John", "Doe", LocalDate.of(1990, 5, 20), "456 Oak Ave", true);
             UpdateTraineeProfileResponse response = new UpdateTraineeProfileResponse(
                     "John.Doe", "John", "Doe", LocalDate.of(1990, 5, 20), "456 Oak Ave", true, List.of());
-            when(traineeService.updateTrainee(eq("John.Doe"), eq("secret"), any())).thenReturn(response);
+            when(traineeService.updateTrainee(eq("John.Doe"), any(), any())).thenReturn(response);
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -257,7 +246,7 @@ class TraineeControllerTest {
                     .andExpect(jsonPath("$.firstName").value("John"))
                     .andExpect(jsonPath("$.isActive").value(true));
 
-            verify(traineeService).updateTrainee(eq("John.Doe"), eq("secret"), any());
+            verify(traineeService).updateTrainee(eq("John.Doe"), any(), any());
         }
 
         @Test
@@ -269,7 +258,6 @@ class TraineeControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -285,7 +273,6 @@ class TraineeControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -301,11 +288,40 @@ class TraineeControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.fieldErrors.dateOfBirth").exists());
+        }
+
+        @Test
+        @DisplayName("Should return 401 when update authentication fails")
+        void shouldReturn401WhenUpdateAuthenticationFails() throws Exception {
+            UpdateTraineeProfileRequest request = new UpdateTraineeProfileRequest(
+                    "John", "Doe", LocalDate.of(1990, 5, 20), "456 Oak Ave", true);
+            when(traineeService.updateTrainee(eq("John.Doe"), any(), any()))
+                    .thenThrow(new AuthenticationException("Invalid credentials"));
+
+            mockMvc.perform(put("/trainees/John.Doe")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.message").value("Invalid credentials"));
+        }
+
+        @Test
+        @DisplayName("Should return 404 when update target trainee is missing")
+        void shouldReturn404WhenUpdateTargetMissing() throws Exception {
+            UpdateTraineeProfileRequest request = new UpdateTraineeProfileRequest(
+                    "John", "Doe", LocalDate.of(1990, 5, 20), "456 Oak Ave", true);
+            when(traineeService.updateTrainee(eq("John.Doe"), any(), any()))
+                    .thenThrow(new EntityNotFoundException("Trainee not found"));
+
+            mockMvc.perform(put("/trainees/John.Doe")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value("Trainee not found"));
         }
     }
 
@@ -320,14 +336,13 @@ class TraineeControllerTest {
         @DisplayName("Should return 200 when trainee is deleted successfully")
         void shouldReturn200WhenTraineeIsDeletedSuccessfully() throws Exception {
             // Arrange
-            doNothing().when(traineeService).deleteTrainee("John.Doe", "secret");
+            doNothing().when(traineeService).deleteTrainee(eq("John.Doe"), any());
 
             // Act & Assert
-            mockMvc.perform(delete("/trainees/John.Doe")
-                            .header("Password", "secret"))
+            mockMvc.perform(delete("/trainees/John.Doe"))
                     .andExpect(status().isOk());
 
-            verify(traineeService).deleteTrainee("John.Doe", "secret");
+            verify(traineeService).deleteTrainee(eq("John.Doe"), any());
         }
 
         @Test
@@ -335,20 +350,23 @@ class TraineeControllerTest {
         void shouldReturn404WhenTraineeDoesNotExist() throws Exception {
             // Arrange
             doThrow(new EntityNotFoundException("Trainee not found"))
-                    .when(traineeService).deleteTrainee("Unknown", "pass");
+                    .when(traineeService).deleteTrainee(eq("Unknown"), any());
 
             // Act & Assert
-            mockMvc.perform(delete("/trainees/Unknown")
-                            .header("Password", "pass"))
+            mockMvc.perform(delete("/trainees/Unknown"))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value("Trainee not found"));
         }
 
         @Test
-        @DisplayName("Should return 400 when Password header is missing")
-        void shouldReturn400WhenPasswordHeaderIsMissing() throws Exception {
+        @DisplayName("Should return 401 when delete authentication fails")
+        void shouldReturn401WhenDeleteAuthenticationFails() throws Exception {
+            doThrow(new AuthenticationException("Invalid credentials"))
+                    .when(traineeService).deleteTrainee(eq("John.Doe"), any());
+
             mockMvc.perform(delete("/trainees/John.Doe"))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.message").value("Invalid credentials"));
         }
     }
 
@@ -363,15 +381,14 @@ class TraineeControllerTest {
         @DisplayName("Should return 200 when trainee is activated successfully")
         void shouldReturn200WhenTraineeIsActivated() throws Exception {
             // Arrange
-            doNothing().when(traineeService).activateTrainee("John.Doe", "secret");
+            doNothing().when(traineeService).activateTrainee(eq("John.Doe"), any());
 
             // Act & Assert
             mockMvc.perform(patch("/trainees/John.Doe/status")
-                            .header("Password", "secret")
                             .param("isActive", "true"))
                     .andExpect(status().isOk());
 
-            verify(traineeService).activateTrainee("John.Doe", "secret");
+            verify(traineeService).activateTrainee(eq("John.Doe"), any());
             verify(traineeService, never()).deactivateTrainee(any(), any());
         }
 
@@ -379,23 +396,21 @@ class TraineeControllerTest {
         @DisplayName("Should return 200 when trainee is deactivated successfully")
         void shouldReturn200WhenTraineeIsDeactivated() throws Exception {
             // Arrange
-            doNothing().when(traineeService).deactivateTrainee("John.Doe", "secret");
+            doNothing().when(traineeService).deactivateTrainee(eq("John.Doe"), any());
 
             // Act & Assert
             mockMvc.perform(patch("/trainees/John.Doe/status")
-                            .header("Password", "secret")
                             .param("isActive", "false"))
                     .andExpect(status().isOk());
 
-            verify(traineeService).deactivateTrainee("John.Doe", "secret");
+            verify(traineeService).deactivateTrainee(eq("John.Doe"), any());
             verify(traineeService, never()).activateTrainee(any(), any());
         }
 
         @Test
         @DisplayName("Should return 400 when isActive param is missing")
         void shouldReturn400WhenIsActiveParamIsMissing() throws Exception {
-            mockMvc.perform(patch("/trainees/John.Doe/status")
-                            .header("Password", "secret"))
+            mockMvc.perform(patch("/trainees/John.Doe/status"))
                     .andExpect(status().isBadRequest());
         }
     }
@@ -416,12 +431,11 @@ class TraineeControllerTest {
             List<TrainerSummary> summaries = List.of(
                     new TrainerSummary("trainer.one", "Trainer", "One", "Yoga"),
                     new TrainerSummary("trainer.two", "Trainer", "Two", "Pilates"));
-            when(traineeService.updateTraineeTrainers(eq("John.Doe"), eq("secret"), anyList()))
+            when(traineeService.updateTraineeTrainers(eq("John.Doe"), any(), anyList()))
                     .thenReturn(summaries);
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe/trainers")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -429,7 +443,7 @@ class TraineeControllerTest {
                     .andExpect(jsonPath("$[0].username").value("trainer.one"))
                     .andExpect(jsonPath("$[1].username").value("trainer.two"));
 
-            verify(traineeService).updateTraineeTrainers(eq("John.Doe"), eq("secret"), anyList());
+            verify(traineeService).updateTraineeTrainers(eq("John.Doe"), any(), anyList());
         }
 
         @Test
@@ -441,7 +455,6 @@ class TraineeControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe/trainers")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -457,7 +470,6 @@ class TraineeControllerTest {
 
             // Act & Assert
             mockMvc.perform(put("/trainees/John.Doe/trainers")
-                            .header("Password", "secret")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -478,30 +490,28 @@ class TraineeControllerTest {
             // Arrange
             List<TrainerSummary> trainers = List.of(
                     new TrainerSummary("trainer.a", "Trainer", "A", "Yoga"));
-            when(traineeService.getAvailableTrainersForTrainee("John.Doe", "secret"))
+            when(traineeService.getAvailableTrainersForTrainee(eq("John.Doe"), any()))
                     .thenReturn(trainers);
 
             // Act & Assert
-            mockMvc.perform(get("/trainees/John.Doe/available-trainers")
-                            .header("Password", "secret"))
+            mockMvc.perform(get("/trainees/John.Doe/available-trainers"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(1))
                     .andExpect(jsonPath("$[0].username").value("trainer.a"))
                     .andExpect(jsonPath("$[0].specialization").value("Yoga"));
 
-            verify(traineeService).getAvailableTrainersForTrainee("John.Doe", "secret");
+            verify(traineeService).getAvailableTrainersForTrainee(eq("John.Doe"), any());
         }
 
         @Test
         @DisplayName("Should return 200 with empty list when no trainers are available")
         void shouldReturn200WithEmptyListWhenNoTrainersAvailable() throws Exception {
             // Arrange
-            when(traineeService.getAvailableTrainersForTrainee("John.Doe", "secret"))
+            when(traineeService.getAvailableTrainersForTrainee(eq("John.Doe"), any()))
                     .thenReturn(List.of());
 
             // Act & Assert
-            mockMvc.perform(get("/trainees/John.Doe/available-trainers")
-                            .header("Password", "secret"))
+            mockMvc.perform(get("/trainees/John.Doe/available-trainers"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.length()").value(0));
         }
@@ -510,14 +520,12 @@ class TraineeControllerTest {
         @DisplayName("Should return 401 when authentication fails")
         void shouldReturn401WhenAuthenticationFails() throws Exception {
             // Arrange
-            when(traineeService.getAvailableTrainersForTrainee("John.Doe", "bad"))
+            when(traineeService.getAvailableTrainersForTrainee(eq("John.Doe"), any()))
                     .thenThrow(new AuthenticationException("Invalid credentials"));
 
             // Act & Assert
-            mockMvc.perform(get("/trainees/John.Doe/available-trainers")
-                            .header("Password", "bad"))
+            mockMvc.perform(get("/trainees/John.Doe/available-trainers"))
                     .andExpect(status().isUnauthorized());
         }
     }
 }
-
