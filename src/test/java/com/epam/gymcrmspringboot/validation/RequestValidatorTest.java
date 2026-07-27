@@ -1,6 +1,7 @@
 package com.epam.gymcrmspringboot.validation;
 
 import com.epam.gymcrmspringboot.dto.request.LoginRequest;
+import com.epam.gymcrmspringboot.dto.request.TrainerWorkloadRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +64,7 @@ class RequestValidatorTest {
     void testValidateThrowsExceptionForNullRequest() {
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> requestValidator.validate(null));
+                () -> requestValidator.validate((Object) null));
         assertEquals("request must not be null", exception.getMessage());
     }
 
@@ -90,5 +92,48 @@ class RequestValidatorTest {
         // Assert
         assertEquals("a-message; z-message", exception.getMessage());
     }
-}
 
+    @Test
+    @DisplayName("Should return invalid field list for invalid trainer workload request")
+    void testValidateTrainerWorkloadRequestReturnsInvalidFields() {
+        TrainerWorkloadRequest request = new TrainerWorkloadRequest(
+                " ",
+                null,
+                "",
+                null,
+                null,
+                0.0,
+                null
+        );
+
+        List<String> invalidFields = requestValidator.validate(request);
+
+        assertEquals(List.of(
+                "trainerUsername",
+                "trainerFirstName",
+                "trainerLastName",
+                "isActive",
+                "trainingDate",
+                "trainingDuration",
+                "actionType"
+        ), invalidFields);
+    }
+
+    @Test
+    @DisplayName("Should return empty list for valid trainer workload request")
+    void testValidateTrainerWorkloadRequestReturnsEmptyList() {
+        TrainerWorkloadRequest request = new TrainerWorkloadRequest(
+                "trainer.user",
+                "John",
+                "Smith",
+                true,
+                java.time.LocalDate.of(2026, 7, 20),
+                60.0,
+                com.epam.gymcrmspringboot.dto.ActionType.ADD
+        );
+
+        List<String> invalidFields = requestValidator.validate(request);
+
+        assertTrue(invalidFields.isEmpty());
+    }
+}

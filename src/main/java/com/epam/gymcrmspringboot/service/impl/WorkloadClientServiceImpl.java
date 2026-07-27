@@ -1,54 +1,46 @@
 package com.epam.gymcrmspringboot.service.impl;
 
-import com.epam.gymcrmspringboot.client.WorkloadClient;
 import com.epam.gymcrmspringboot.dto.ActionType;
 import com.epam.gymcrmspringboot.dto.request.TrainerWorkloadRequest;
 import com.epam.gymcrmspringboot.exception.TrainerWorkloadException;
-import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.service.WorkloadClientService;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.epam.gymcrmspringboot.validation.RequestValidator;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.JmsException;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WorkloadClientServiceImpl implements WorkloadClientService {
 
     private static final Logger log = LoggerFactory.getLogger(WorkloadClientServiceImpl.class);
-    private static final String WORKLOAD_CIRCUIT_BREAKER = "workloadServiceCircuitBreaker";
 
-    WorkloadClient workloadClient;
-    AuthenticationService authenticationService;
-    CircuitBreakerRegistry circuitBreakerRegistry;
+    JmsTemplate jmsTemplate;
+    RequestValidator requestValidator;
+    String trainerWorkloadQueue;
+    String trainerWorkloadInvalidDlq;
 
-    @PostConstruct
-    void subscribeToCircuitBreakerStateTransitions() {
-        io.github.resilience4j.circuitbreaker.CircuitBreaker circuitBreaker =
-                circuitBreakerRegistry.circuitBreaker(WORKLOAD_CIRCUIT_BREAKER);
-        circuitBreaker.getEventPublisher().onStateTransition(event -> {
-            switch (event.getStateTransition().getToState()) {
-                case OPEN -> log.warn("Workload circuit breaker state is OPEN. Workload server is not available; requests are blocked.");
-                case HALF_OPEN -> log.info("Workload circuit breaker state is HALF_OPEN. Limited test requests are allowed.");
-                case CLOSED -> log.info("Workload circuit breaker state is CLOSED. Normal traffic to workload server is resumed.");
-                default -> log.debug("Workload circuit breaker state changed: {}", event.getStateTransition());
-            }
-        });
+    public WorkloadClientServiceImpl(
+            JmsTemplate jmsTemplate,
+            RequestValidator requestValidator,
+            @Value("${app.messaging.queue.trainer-workload}") String trainerWorkloadQueue,
+            @Value("${app.messaging.queue.trainer-workload-invalid-dlq}") String trainerWorkloadInvalidDlq
+    ) {
+        this.jmsTemplate = jmsTemplate;
+        this.requestValidator = requestValidator;
+        this.trainerWorkloadQueue = trainerWorkloadQueue;
+        this.trainerWorkloadInvalidDlq = trainerWorkloadInvalidDlq;
     }
 
     @Override
-    @CircuitBreaker(name = WORKLOAD_CIRCUIT_BREAKER, fallbackMethod = "notifyWorkloadAddFallback")
     public void notifyWorkloadAdd(String trainerUsername, String trainerFirstName, String trainerLastName,
                                   boolean isActive, LocalDate trainingDate, double trainingDuration) {
         notifyWorkload(trainerUsername, trainerFirstName, trainerLastName, isActive, trainingDate, trainingDuration,
@@ -56,7 +48,6 @@ public class WorkloadClientServiceImpl implements WorkloadClientService {
     }
 
     @Override
-    @CircuitBreaker(name = WORKLOAD_CIRCUIT_BREAKER, fallbackMethod = "notifyWorkloadDeleteFallback")
     public void notifyWorkloadDelete(String trainerUsername, String trainerFirstName, String trainerLastName,
                                      boolean isActive, LocalDate trainingDate, double trainingDuration) {
         notifyWorkload(trainerUsername, trainerFirstName, trainerLastName, isActive, trainingDate, trainingDuration,
@@ -66,17 +57,6 @@ public class WorkloadClientServiceImpl implements WorkloadClientService {
     private void notifyWorkload(String trainerUsername, String trainerFirstName, String trainerLastName,
                                 boolean isActive, LocalDate trainingDate, double trainingDuration,
                                 ActionType actionType) {
-        String authorizationHeader;
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            HttpServletRequest httpRequest = attributes.getRequest();
-            String token = authenticationService.extractTokenFromAuthorizationHeader(
-                    httpRequest.getHeader("Authorization"));
-            authorizationHeader = token == null || token.isBlank() ? "" : "Bearer " + token;
-        } else {
-            authorizationHeader = "";
-        }
-
         TrainerWorkloadRequest request = new TrainerWorkloadRequest(
                 trainerUsername,
                 trainerFirstName,
@@ -87,33 +67,25 @@ public class WorkloadClientServiceImpl implements WorkloadClientService {
                 actionType
         );
 
-        workloadClient.notifyWorkload(request, authorizationHeader);
-    }
-
-    public void notifyWorkloadAddFallback(String trainerUsername, String trainerFirstName, String trainerLastName,
-                                          boolean isActive, LocalDate trainingDate, double trainingDuration,
-                                          Throwable throwable) {
-        log.warn("Workload server is not available. Skipping ADD workload notification for trainerUsername={}.",
-                trainerUsername, throwable);
-        throw toTrainerWorkloadException("ADD", trainerUsername, throwable);
-    }
-
-    public void notifyWorkloadDeleteFallback(String trainerUsername, String trainerFirstName, String trainerLastName,
-                                             boolean isActive, LocalDate trainingDate, double trainingDuration,
-                                             Throwable throwable) {
-        log.warn("Workload server is not available. Skipping DELETE workload notification for trainerUsername={}.",
-                trainerUsername, throwable);
-        throw toTrainerWorkloadException("DELETE", trainerUsername, throwable);
-    }
-
-    private TrainerWorkloadException toTrainerWorkloadException(String action, String trainerUsername, Throwable throwable) {
-        if (throwable instanceof TrainerWorkloadException trainerWorkloadException) {
-            return trainerWorkloadException;
+        List<String> invalidFields = requestValidator.validate(request);
+        try {
+            if (!invalidFields.isEmpty()) {
+                log.warn("Routing to DLQ [{}]: missing/invalid fields: {}",
+                        trainerWorkloadInvalidDlq, invalidFields);
+                jmsTemplate.convertAndSend(trainerWorkloadInvalidDlq, request);
+                return;
+            }
+            jmsTemplate.convertAndSend(trainerWorkloadQueue, request);
+            log.info("Sent {} trainer workload message for trainerUsername={} to queue={}",
+                    actionType, trainerUsername, trainerWorkloadQueue);
+        } catch (JmsException ex) {
+            log.error("Failed to send {} trainer workload message for trainerUsername={} to queue={}",
+                    actionType, trainerUsername, trainerWorkloadQueue, ex);
+            throw new TrainerWorkloadException(
+                    "Failed to send " + actionType + " workload notification for trainerUsername=" + trainerUsername,
+                    ex
+            );
         }
-        return new TrainerWorkloadException(
-                "External workload service failed while processing " + action + " notification for trainerUsername=" + trainerUsername,
-                throwable
-        );
     }
 
 }

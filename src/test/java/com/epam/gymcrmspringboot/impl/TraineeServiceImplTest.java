@@ -20,9 +20,11 @@ import com.epam.gymcrmspringboot.repository.TraineeRepository;
 import com.epam.gymcrmspringboot.service.AuthenticationService;
 import com.epam.gymcrmspringboot.service.TrainerService;
 import com.epam.gymcrmspringboot.service.UserService;
+import com.epam.gymcrmspringboot.service.WorkloadClientService;
 import com.epam.gymcrmspringboot.service.impl.TraineeServiceImpl;
 import com.epam.gymcrmspringboot.validation.RequestValidator;
 import com.epam.gymcrmspringboot.validation.TrainerTraineeRegistrationValidator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +34,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -70,6 +74,9 @@ class TraineeServiceImplTest {
 
     @Mock
     private TrainerTraineeRegistrationValidator trainerTraineeRegistrationValidator;
+
+    @Mock
+    private WorkloadClientService workloadClientService;
 
     @InjectMocks
     private TraineeServiceImpl traineeService;
@@ -133,6 +140,13 @@ class TraineeServiceImplTest {
         updateTraineeProfileRequest = new UpdateTraineeProfileRequest();
         updateTraineeProfileRequest.setFirstName("Jane");
         updateTraineeProfileRequest.setAddress("456 Oak Ave");
+    }
+
+    @AfterEach
+    void clearTransactionSynchronization() {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
 
     @Nested
@@ -427,15 +441,45 @@ class TraineeServiceImplTest {
         @DisplayName("Should delete trainee successfully")
         void testDeleteTraineeSuccess() {
             // Arrange
+            TrainerEntity trainer = TrainerEntity.builder()
+                    .id(10L)
+                    .user(UserEntity.builder()
+                            .id(11L)
+                            .username("trainer.user")
+                            .firstName("Trainer")
+                            .lastName("One")
+                            .isActive(true)
+                            .build())
+                    .build();
+            TrainingEntity training = TrainingEntity.builder()
+                    .id(100L)
+                    .trainer(trainer)
+                    .trainingDate(LocalDate.of(2026, 7, 20))
+                    .trainingDuration(60)
+                    .build();
+            traineeEntity.setTrainings(new ArrayList<>(List.of(training)));
+
             doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
             when(traineeRepository.findByUserUsernameAndUserIsActiveTrueWithTrainings("John.Doe"))
                     .thenReturn(Optional.of(traineeEntity));
+            TransactionSynchronizationManager.initSynchronization();
 
             // Act
             traineeService.deleteTrainee("John.Doe", authentication);
+            List<TransactionSynchronization> synchronizations = TransactionSynchronizationManager.getSynchronizations();
+            assertEquals(1, synchronizations.size());
+            synchronizations.get(0).afterCommit();
 
             // Assert
             verify(traineeRepository).delete(traineeEntity);
+            verify(workloadClientService).notifyWorkloadDelete(
+                    "trainer.user",
+                    "Trainer",
+                    "One",
+                    true,
+                    LocalDate.of(2026, 7, 20),
+                    60.0
+            );
         }
 
         @Test
