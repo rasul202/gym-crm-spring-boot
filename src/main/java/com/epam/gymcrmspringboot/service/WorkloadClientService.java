@@ -5,9 +5,9 @@ import java.time.LocalDate;
 public interface WorkloadClientService {
 
     void notifyWorkloadDelete(String trainerUsername, String trainerFirstName, String trainerLastName,
-                              boolean isActive, LocalDate trainingDate, double trainingDuration);
+                              boolean isActive, LocalDate trainingDate, Integer trainingDuration);
 
     void notifyWorkloadAdd(String trainerUsername, String trainerFirstName, String trainerLastName,
-                           boolean isActive, LocalDate trainingDate, double trainingDuration);
+                           boolean isActive, LocalDate trainingDate, Integer trainingDuration);
 
 }

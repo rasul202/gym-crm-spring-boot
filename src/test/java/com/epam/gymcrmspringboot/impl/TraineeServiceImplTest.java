@@ -478,7 +478,7 @@ class TraineeServiceImplTest {
                     "One",
                     true,
                     LocalDate.of(2026, 7, 20),
-                    60.0
+                    60
             );
         }
 

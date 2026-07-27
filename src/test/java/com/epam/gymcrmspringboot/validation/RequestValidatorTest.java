@@ -102,7 +102,7 @@ class RequestValidatorTest {
                 "",
                 null,
                 null,
-                0.0,
+                0,
                 null
         );
 
@@ -128,7 +128,7 @@ class RequestValidatorTest {
                 "Smith",
                 true,
                 java.time.LocalDate.of(2026, 7, 20),
-                60.0,
+                60,
                 com.epam.gymcrmspringboot.dto.ActionType.ADD
         );
 
