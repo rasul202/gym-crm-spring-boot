@@ -53,7 +53,7 @@ class WorkloadClientServiceImplTest {
     void shouldSendAddMessageToQueue() {
         when(requestValidator.validate(any(TrainerWorkloadRequest.class))).thenReturn(List.of());
 
-        service.notifyWorkloadAdd("trainer.user", "John", "Smith", true, LocalDate.of(2026, 7, 6), 60);
+        service.notifyWorkloadAdd("trainer.user", "John", "Smith", true, LocalDate.of(2026, 7, 6), 60, 1L);
 
         ArgumentCaptor<TrainerWorkloadRequest> requestCaptor = ArgumentCaptor.forClass(TrainerWorkloadRequest.class);
         verify(jmsTemplate).convertAndSend(eq(WORKLOAD_QUEUE), requestCaptor.capture());
@@ -66,6 +66,7 @@ class WorkloadClientServiceImplTest {
                 () -> assertTrue(actual.getIsActive()),
                 () -> assertEquals(LocalDate.of(2026, 7, 6), actual.getTrainingDate()),
                 () -> assertEquals(60, actual.getTrainingDuration()),
+                () -> assertEquals(1L, actual.getTrainingId()),
                 () -> assertEquals(ActionType.ADD, actual.getActionType())
         );
     }
@@ -93,7 +94,7 @@ class WorkloadClientServiceImplTest {
         }).when(jmsTemplate).convertAndSend(eq(WORKLOAD_QUEUE), any(TrainerWorkloadRequest.class));
 
         TrainerWorkloadException ex = assertThrows(TrainerWorkloadException.class,
-                () -> service.notifyWorkloadAdd("trainer.user", "John", "Smith", true, LocalDate.of(2026, 7, 6), 60));
+                () -> service.notifyWorkloadAdd("trainer.user", "John", "Smith", true, LocalDate.of(2026, 7, 6), 60 ,1L));
 
         assertTrue(ex.getMessage().contains("Failed to send ADD workload notification"));
         assertNotNull(ex.getCause());
@@ -106,7 +107,7 @@ class WorkloadClientServiceImplTest {
         when(requestValidator.validate(any(TrainerWorkloadRequest.class)))
                 .thenReturn(List.of("trainerFirstName", "trainingDate"));
 
-        service.notifyWorkloadAdd("trainer.user", " ", "Smith", true, null, 60);
+        service.notifyWorkloadAdd("trainer.user", " ", "Smith", true, null, 60, 1L);
 
         verify(jmsTemplate).convertAndSend(eq(INVALID_DLQ), any(TrainerWorkloadRequest.class));
         verify(jmsTemplate, never()).convertAndSend(eq(WORKLOAD_QUEUE), any(TrainerWorkloadRequest.class));

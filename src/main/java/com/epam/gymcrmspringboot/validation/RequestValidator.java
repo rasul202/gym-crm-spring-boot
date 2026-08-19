@@ -45,6 +45,8 @@ public class RequestValidator {
             return invalidFields;
         }
 
+        //request.trainingId is optional, so we don't validate it. trainingId is only used for ADD action to prevent idempotency issue at consumer side, and it can be null for DELETE action.
+
         if (isBlank(request.getTrainerUsername())) {
             invalidFields.add("trainerUsername");
         }

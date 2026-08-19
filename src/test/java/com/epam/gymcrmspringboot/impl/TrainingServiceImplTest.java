@@ -174,7 +174,8 @@ class TrainingServiceImplTest {
                     "Smith",
                     true,
                     LocalDate.of(2024, 1, 15),
-                    60
+                    60,
+                    1L
             );
         }
 
@@ -440,7 +441,7 @@ class TrainingServiceImplTest {
 
             verify(workloadClientServiceImpl, times(1)).notifyWorkloadAdd(
                     "trainer.user", "John", "Smith", true,
-                    LocalDate.of(2024, 1, 15), 60
+                    LocalDate.of(2024, 1, 15), 60, 1L
             );
         }
 
@@ -453,7 +454,7 @@ class TrainingServiceImplTest {
             when(trainingTypeService.getTrainingTypeByName("Yoga")).thenReturn(trainingTypeEntity);
             when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(trainingEntity);
             doThrow(new RuntimeException("ActiveMQ down"))
-                    .when(workloadClientServiceImpl).notifyWorkloadAdd(any(), any(), any(), any(), any(), any());
+                    .when(workloadClientServiceImpl).notifyWorkloadAdd(any(), any(), any(), any(), any(), any(), any());
 
             assertDoesNotThrow(() -> trainingService.addTraining(addTrainingRequest, authentication));
             verify(trainingRepository).save(any(TrainingEntity.class));

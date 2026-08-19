@@ -110,6 +110,7 @@ public class TrainingServiceImpl implements TrainingService {
         Boolean trainerIsActive = trainer.getUser().getIsActive();
         LocalDate trainingDate = saved.getTrainingDate();
         Integer trainingDuration = saved.getTrainingDuration();
+        Long trainingId = saved.getId();
 
         executeAfterCommit(
                 () -> workloadClientServiceImpl.notifyWorkloadAdd(
@@ -118,7 +119,8 @@ public class TrainingServiceImpl implements TrainingService {
                         trainerLastName,
                         trainerIsActive,
                         trainingDate,
-                        trainingDuration
+                        trainingDuration,
+                        trainingId
                 ),
                 String.format("ADD training id=%d, trainerUsername=%s", saved.getId(), trainerUsername)
         );

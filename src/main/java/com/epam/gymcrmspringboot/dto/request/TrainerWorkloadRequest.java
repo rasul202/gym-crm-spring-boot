@@ -18,5 +18,6 @@ public class TrainerWorkloadRequest {
     private Boolean isActive;
     private LocalDate trainingDate;
     private Integer trainingDuration;
+    private Long trainingId;
     private ActionType actionType;
 }

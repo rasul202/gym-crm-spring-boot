@@ -8,6 +8,6 @@ public interface WorkloadClientService {
                               boolean isActive, LocalDate trainingDate, Integer trainingDuration);
 
     void notifyWorkloadAdd(String trainerUsername, String trainerFirstName, String trainerLastName,
-                           boolean isActive, LocalDate trainingDate, Integer trainingDuration);
+                           boolean isActive, LocalDate trainingDate, Integer trainingDuration, Long trainingId);
 
 }

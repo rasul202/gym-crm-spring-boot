@@ -103,6 +103,7 @@ class RequestValidatorTest {
                 null,
                 null,
                 0,
+                0L,
                 null
         );
 
@@ -129,6 +130,7 @@ class RequestValidatorTest {
                 true,
                 java.time.LocalDate.of(2026, 7, 20),
                 60,
+                0L,
                 com.epam.gymcrmspringboot.dto.ActionType.ADD
         );
 

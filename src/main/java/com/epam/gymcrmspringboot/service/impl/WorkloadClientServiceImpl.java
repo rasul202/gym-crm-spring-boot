@@ -42,20 +42,20 @@ public class WorkloadClientServiceImpl implements WorkloadClientService {
 
     @Override
     public void notifyWorkloadAdd(String trainerUsername, String trainerFirstName, String trainerLastName,
-                                  boolean isActive, LocalDate trainingDate, Integer trainingDuration) {
-        notifyWorkload(trainerUsername, trainerFirstName, trainerLastName, isActive, trainingDate, trainingDuration,
+                                  boolean isActive, LocalDate trainingDate, Integer trainingDuration, Long trainingId) {
+        notifyWorkload(trainerUsername, trainerFirstName, trainerLastName, isActive, trainingDate, trainingDuration,trainingId,
                 ActionType.ADD);
     }
 
     @Override
     public void notifyWorkloadDelete(String trainerUsername, String trainerFirstName, String trainerLastName,
                                      boolean isActive, LocalDate trainingDate, Integer trainingDuration) {
-        notifyWorkload(trainerUsername, trainerFirstName, trainerLastName, isActive, trainingDate, trainingDuration,
+        notifyWorkload(trainerUsername, trainerFirstName, trainerLastName, isActive, trainingDate, trainingDuration,0L,
                 ActionType.DELETE);
     }
 
     private void notifyWorkload(String trainerUsername, String trainerFirstName, String trainerLastName,
-                                boolean isActive, LocalDate trainingDate, Integer trainingDuration,
+                                boolean isActive, LocalDate trainingDate, Integer trainingDuration, Long trainingId,
                                 ActionType actionType) {
         TrainerWorkloadRequest request = new TrainerWorkloadRequest(
                 trainerUsername,
@@ -64,6 +64,7 @@ public class WorkloadClientServiceImpl implements WorkloadClientService {
                 isActive,
                 trainingDate,
                 trainingDuration,
+                trainingId,
                 actionType
         );
 
