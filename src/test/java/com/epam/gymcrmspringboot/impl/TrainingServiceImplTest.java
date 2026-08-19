@@ -32,6 +32,7 @@ import org.springframework.security.core.Authentication;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -393,6 +394,112 @@ class TrainingServiceImplTest {
 
             // Assert
             verify(trainingRepository).saveAll(assignments);
+        }
+    }
+
+    @Nested
+    @DisplayName("Workload Notification Safety Tests")
+    class WorkloadNotificationSafetyTests {
+
+        /*
+         * In Mockito unit tests, TransactionSynchronizationManager.isSynchronizationActive() returns false,
+         * so executeAfterCommit() runs the action immediately in the else branch.
+         *
+         * This means: "notification not called when exception thrown before registration"
+         * maps directly to the production guarantee: "notification not sent when TX rolls back"
+         * (because afterCommit() never fires on rollback).
+         */
+
+        @Test
+        @DisplayName("addTraining: no notification on ANY failure before executeAfterCommit")
+        void addTraining_noNotificationOnFailure() {
+            // Simulate failure at the LAST possible point before notification registration: repository.save()
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(traineeService.getTraineeByUsername("trainee.user")).thenReturn(traineeEntity);
+            when(trainerService.getTrainerByUsername("trainer.user")).thenReturn(trainerEntity);
+            when(trainingTypeService.getTrainingTypeByName("Yoga")).thenReturn(trainingTypeEntity);
+            when(trainingRepository.save(any(TrainingEntity.class)))
+                    .thenThrow(new RuntimeException("DB constraint violation"));
+
+            assertThrows(RuntimeException.class,
+                    () -> trainingService.addTraining(addTrainingRequest, authentication));
+
+            verifyNoInteractions(workloadClientServiceImpl);
+        }
+
+        @Test
+        @DisplayName("addTraining: notification IS called with correct args on success")
+        void addTraining_notifiesOnSuccess() {
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(traineeService.getTraineeByUsername("trainee.user")).thenReturn(traineeEntity);
+            when(trainerService.getTrainerByUsername("trainer.user")).thenReturn(trainerEntity);
+            when(trainingTypeService.getTrainingTypeByName("Yoga")).thenReturn(trainingTypeEntity);
+            when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(trainingEntity);
+
+            trainingService.addTraining(addTrainingRequest, authentication);
+
+            verify(workloadClientServiceImpl, times(1)).notifyWorkloadAdd(
+                    "trainer.user", "John", "Smith", true,
+                    LocalDate.of(2024, 1, 15), 60
+            );
+        }
+
+        @Test
+        @DisplayName("addTraining: notification failure does NOT propagate to caller")
+        void addTraining_notificationFailureIsSwallowed() {
+            doNothing().when(authenticationService).assertAuthenticatedUser(any(), any());
+            when(traineeService.getTraineeByUsername("trainee.user")).thenReturn(traineeEntity);
+            when(trainerService.getTrainerByUsername("trainer.user")).thenReturn(trainerEntity);
+            when(trainingTypeService.getTrainingTypeByName("Yoga")).thenReturn(trainingTypeEntity);
+            when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(trainingEntity);
+            doThrow(new RuntimeException("ActiveMQ down"))
+                    .when(workloadClientServiceImpl).notifyWorkloadAdd(any(), any(), any(), any(), any(), any());
+
+            assertDoesNotThrow(() -> trainingService.addTraining(addTrainingRequest, authentication));
+            verify(trainingRepository).save(any(TrainingEntity.class));
+        }
+
+        @Test
+        @DisplayName("deleteTraining: no notification on ANY failure before executeAfterCommit")
+        void deleteTraining_noNotificationOnFailure() {
+            // Simulate failure at the LAST possible point: deleteById
+            when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
+            doNothing().when(authenticationService).assertAuthenticatedUser("trainer.user", authentication);
+            doThrow(new RuntimeException("FK constraint"))
+                    .when(trainingRepository).deleteById(1L);
+
+            assertThrows(RuntimeException.class,
+                    () -> trainingService.deleteTraining(1L, authentication));
+
+            verifyNoInteractions(workloadClientServiceImpl);
+        }
+
+        @Test
+        @DisplayName("deleteTraining: notification IS called with correct args on success")
+        void deleteTraining_notifiesOnSuccess() {
+            when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
+            doNothing().when(authenticationService).assertAuthenticatedUser("trainer.user", authentication);
+            doNothing().when(trainingRepository).deleteById(1L);
+
+            trainingService.deleteTraining(1L, authentication);
+
+            verify(workloadClientServiceImpl, times(1)).notifyWorkloadDelete(
+                    "trainer.user", "John", "Smith", true,
+                    LocalDate.of(2024, 1, 15), 60
+            );
+        }
+
+        @Test
+        @DisplayName("deleteTraining: notification failure does NOT propagate to caller")
+        void deleteTraining_notificationFailureIsSwallowed() {
+            when(trainingRepository.findById(1L)).thenReturn(Optional.of(trainingEntity));
+            doNothing().when(authenticationService).assertAuthenticatedUser("trainer.user", authentication);
+            doNothing().when(trainingRepository).deleteById(1L);
+            doThrow(new RuntimeException("JMS broker unavailable"))
+                    .when(workloadClientServiceImpl).notifyWorkloadDelete(any(), any(), any(), any(), any(), any());
+
+            assertDoesNotThrow(() -> trainingService.deleteTraining(1L, authentication));
+            verify(trainingRepository).deleteById(1L);
         }
     }
 

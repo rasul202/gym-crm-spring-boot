@@ -24,7 +24,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,7 +79,6 @@ public class TrainingServiceImpl implements TrainingService {
         authenticationService.assertAuthenticatedUser(request.getTrainerUsername(), authentication);
 
         TraineeEntity trainee = traineeService.getTraineeByUsername(request.getTraineeUsername());
-
         TrainerEntity trainer = trainerService.getTrainerByUsername(request.getTrainerUsername());
 
         String trainingTypeName = trainer.getSpecialization() != null
@@ -101,13 +103,24 @@ public class TrainingServiceImpl implements TrainingService {
         TrainingEntity saved = trainingRepository.save(training);
         LOGGER.info("Created training id={}", saved.getId());
 
-        workloadClientServiceImpl.notifyWorkloadAdd(
-                trainer.getUser().getUsername(),
-                trainer.getUser().getFirstName(),
-                trainer.getUser().getLastName(),
-                trainer.getUser().getIsActive(),
-                saved.getTrainingDate(),
-                saved.getTrainingDuration()
+        // Capture values into local variables — safe from lazy-loading issues post-transaction
+        String trainerUsername = trainer.getUser().getUsername();
+        String trainerFirstName = trainer.getUser().getFirstName();
+        String trainerLastName = trainer.getUser().getLastName();
+        Boolean trainerIsActive = trainer.getUser().getIsActive();
+        LocalDate trainingDate = saved.getTrainingDate();
+        Integer trainingDuration = saved.getTrainingDuration();
+
+        executeAfterCommit(
+                () -> workloadClientServiceImpl.notifyWorkloadAdd(
+                        trainerUsername,
+                        trainerFirstName,
+                        trainerLastName,
+                        trainerIsActive,
+                        trainingDate,
+                        trainingDuration
+                ),
+                String.format("ADD training id=%d, trainerUsername=%s", saved.getId(), trainerUsername)
         );
     }
 
@@ -122,16 +135,28 @@ public class TrainingServiceImpl implements TrainingService {
         TrainerEntity trainer = training.getTrainer();
         authenticationService.assertAuthenticatedUser(trainer.getUser().getUsername(), authentication);
 
+        // Capture all values BEFORE delete — the entity may become detached/inaccessible after removal
+        String trainerUsername = trainer.getUser().getUsername();
+        String trainerFirstName = trainer.getUser().getFirstName();
+        String trainerLastName = trainer.getUser().getLastName();
+        Boolean trainerIsActive = trainer.getUser().getIsActive();
+        LocalDate trainingDate = training.getTrainingDate();
+        Integer trainingDuration = training.getTrainingDuration();
+
         trainingRepository.deleteById(trainingId);
         LOGGER.info("Deleted training id={}", trainingId);
 
-        workloadClientServiceImpl.notifyWorkloadDelete(
-                trainer.getUser().getUsername(),
-                trainer.getUser().getFirstName(),
-                trainer.getUser().getLastName(),
-                trainer.getUser().getIsActive(),
-                training.getTrainingDate(),
-                training.getTrainingDuration()
+        // Send notification ONLY after the transaction commits successfully
+        executeAfterCommit(
+                () -> workloadClientServiceImpl.notifyWorkloadDelete(
+                        trainerUsername,
+                        trainerFirstName,
+                        trainerLastName,
+                        trainerIsActive,
+                        trainingDate,
+                        trainingDuration
+                ),
+                String.format("DELETE training id=%d, trainerUsername=%s", trainingId, trainerUsername)
         );
     }
 
@@ -182,5 +207,32 @@ public class TrainingServiceImpl implements TrainingService {
     public void saveAll(List<TrainingEntity> newTrainerAssignments) {
         trainingRepository.saveAll(newTrainerAssignments);
     }
+
+    private void executeAfterCommit(Runnable notificationAction, String operationContext) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    try {
+                        notificationAction.run();
+                    } catch (RuntimeException ex) {
+                        LOGGER.error("Failed to send workload notification after commit for [{}]",
+                                operationContext, ex);
+                    }
+                }
+            });
+            LOGGER.debug("Registered post-commit workload notification for [{}]", operationContext);
+        } else {
+            LOGGER.warn("Transaction synchronization is inactive; sending workload notification immediately for [{}]",
+                    operationContext);
+            try {
+                notificationAction.run();
+            } catch (RuntimeException ex) {
+                LOGGER.error("Failed to send workload notification (no active transaction) for [{}]",
+                        operationContext, ex);
+            }
+        }
+    }
+
 
 }
