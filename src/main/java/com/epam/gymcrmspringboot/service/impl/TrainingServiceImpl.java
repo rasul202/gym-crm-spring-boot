@@ -45,7 +45,7 @@ public class TrainingServiceImpl implements TrainingService {
     TrainingTypeService trainingTypeService;
     TrainerService trainerService;
     TraineeService traineeService;
-    WorkloadClientServiceImpl workloadClientServiceImpl;
+    WorkloadClientService workloadClientServiceImpl;
 
     public TrainingServiceImpl(
             TrainingRepository trainingRepository,
@@ -56,7 +56,7 @@ public class TrainingServiceImpl implements TrainingService {
             TrainingTypeService trainingTypeService,
             TrainerService trainerService,
             @Lazy TraineeService traineeService,
-            WorkloadClientServiceImpl workloadClientServiceImpl) {
+            WorkloadClientService workloadClientService) {
         this.trainingRepository = trainingRepository;
         this.trainingCriteriaRepository = trainingCriteriaRepository;
         this.authenticationService = authenticationService;
@@ -65,7 +65,7 @@ public class TrainingServiceImpl implements TrainingService {
         this.trainingTypeService = trainingTypeService;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
-        this.workloadClientServiceImpl = workloadClientServiceImpl;
+        this.workloadClientServiceImpl = workloadClientService;
     }
 
     @Override
