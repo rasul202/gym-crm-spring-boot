@@ -454,7 +454,8 @@ class TrainingServiceImplTest {
             when(trainingTypeService.getTrainingTypeByName("Yoga")).thenReturn(trainingTypeEntity);
             when(trainingRepository.save(any(TrainingEntity.class))).thenReturn(trainingEntity);
             doThrow(new RuntimeException("ActiveMQ down"))
-                    .when(workloadClientServiceImpl).notifyWorkloadAdd(any(), any(), any(), any(), any(), any(), any());
+                    .when(workloadClientServiceImpl).notifyWorkloadAdd(
+                            anyString(), anyString(), anyString(), anyBoolean(), any(LocalDate.class), anyInt(), anyLong());
 
             assertDoesNotThrow(() -> trainingService.addTraining(addTrainingRequest, authentication));
             verify(trainingRepository).save(any(TrainingEntity.class));
@@ -497,7 +498,8 @@ class TrainingServiceImplTest {
             doNothing().when(authenticationService).assertAuthenticatedUser("trainer.user", authentication);
             doNothing().when(trainingRepository).deleteById(1L);
             doThrow(new RuntimeException("JMS broker unavailable"))
-                    .when(workloadClientServiceImpl).notifyWorkloadDelete(any(), any(), any(), any(), any(), any());
+                    .when(workloadClientServiceImpl).notifyWorkloadDelete(
+                            anyString(), anyString(), anyString(), anyBoolean(), any(LocalDate.class), anyInt());
 
             assertDoesNotThrow(() -> trainingService.deleteTraining(1L, authentication));
             verify(trainingRepository).deleteById(1L);
